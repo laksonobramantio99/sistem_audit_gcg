@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Form Tambah Delegasi Perspektif GCG</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css"/>
+
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <div style="padding: 1%"><h2 class="text-blue font-weight-bold mb-3 " th:text="'Form Tambah Delegasi Perspektif Penilaian GCG ' + ${tahun}"></h2></div>
+            <form class="card" id="addDelegasiForm" th:action="@{/delegasi/tambah}" th:object="${delegasi}" method="POST">
+                <div class="card-body">
+                    <div>
+                        <div style="padding: 1%"><h4 class="text-orange">Penanggung Jawab:</h4></div>
+                        <div class="col-sm-3 col-md-6 col-lg-5">
+                            <select class="form-control check" th:field="*{delegasiDivisi}" name="divisi" required>
+                                <option selected value="">Pilih divisi</option>
+                                <option th:each="divisi : ${listDivisi}" th:value="${divisi.id}" th:text="${divisi.nama}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <div class="col-6"></div>
+                        <div class="col-2 " style="padding-left: 5%"><label for="myInput" class="Subtitle-orange">Cari Parameter</label></div>
+                        <div class="col-4" style="padding-right: 4%">
+                            <input class="form-control form-control-sm " id="myInput" type="text" placeholder="Masukan nama aspek atau perspektif">
+                        </div>
+                    </div>
+                    <div class="row mt-2 container-fluid">
+                        <table class="table" style="background-color: white" cellspacing="0" width="100%">
+                            <div th:each="aspek, iterationStatus : ${listAspek}">
+                                <thead class="card-link" >
+                                    <tr class="thead bg-blue" th:id="'aspek'+${aspek.noUrut}" tipe="aspek">
+                                        <th style="text-align: center" data-toggle="collapse" th:href="'.collapse' + ${iterationStatus.index}">
+                                            <a style="color: white;" href="javascript:void(0)"><i class="fas fa-caret-down"></i></a>
+                                        </th>
+                                        <th scope="col" th:text="${aspek.aspek}"></th>
+                                        <th scope="col" align="center">
+                                            <div>
+                                                <input type="checkbox" class="checkAll" th:id="'aspek'+${aspek.noUrut}">
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myTable">
+                                <div th:each="daftarPerspektif, perspektifIterationStatus : ${listPerspektif}" style="border: 1px solid #ddd;">
+                                    <div th:if="${iterationStatus.index == perspektifIterationStatus.index}" th:each="perspektif, perspektifindex : ${daftarPerspektif}">
+                                        <tr th:classappend="${(' collapse'+iterationStatus.index)}" class="collapse show" th:id="'perspektif'+${perspektif.noUrut}" th:attr="parent='aspek'+${aspek.noUrut}" tipe="perspektif">
+                                            <td th:text="${perspektif.noUrut}" align="center"></td>
+                                            <td th:text="${perspektif.perspektif}"></td>
+                                            <td align="center">
+                                                <div>
+                                                    <input type="checkbox" class="perspektif check" th:id="'perspektif'+${perspektif.noUrut}" th:attr="parent='aspek'+${aspek.noUrut}" name="lembarKerjaCheckbox" th:value="${perspektif.id}" tipe="perspektif">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </div>
+                                </div>
+                                </tbody>
+                            </div>
+                        </table>
+                        <br><br>
+                    </div>
+                </div>
+                <div align="center" class="fixed-bottom" style="background-color: white;padding: 1%">
+                    <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                    <button type="button" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                    <a th:href="@{/delegasi}" role="button" class="btn secondary-button btn-outline-blue">Kembali</a>
+                </div>
+                <br>
+            </form>
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Delegasi perspektif berhasil ditambahkan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/delegasi}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+</body>
+<script>
+    $('.checkAll').change(function () {
+        var idParent = $(this).attr("id");
+        if ($(this).prop("checked") === true) {
+            $('.perspektif[parent="'+idParent+'"]').prop("checked", true);
+        } else if ($(this).prop("checked") === false){
+            $('.perspektif[parent="'+idParent+'"]').prop("checked", false);
+        }
+    });
+
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+        $("#myTable tr").filter(function() {
+            var isMatch = $(this).text().toLowerCase().indexOf(value) > -1;
+            parent = $(this).attr("parent");
+
+            if($('#' + parent).is(":visible")){
+                var isParentMatch = $('#'+ parent).text().toLowerCase().indexOf(value) > -1;
+
+                if(isParentMatch) {
+                    $(this).show();
+                    return;
+                }
+
+                if($(this).attr("tipe")=="perspektif"){
+                    aspekParent = $('#' + parent).attr("parent");
+                    isAspekMatch = $('#' + aspekParent).text().toLowerCase().indexOf(value) > -1
+                    if(isAspekMatch){
+                        $(this).show();
+                        return;
+                    }
+                }
+
+            }
+
+            if(isMatch == true){
+                $(this).show();
+                if($(this).attr("tipe")=="aspek"){
+
+                } else if($(this).attr("tipe")=="perspektif"){
+                    $('#'+parent).show();
+                }
+            }
+            else {
+                $(this).hide()
+            }
+
+        });
+    });
+
+    function validateForm() {
+        var isValid = true;
+        $('.check').each(function() {
+            if ( $(this).val() === '') {
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+
+    function validateCheckbox() {
+        var isValid = true;
+        var input = document.getElementsByTagName("input");
+
+        for (var i=0;i<input.length;i++) {
+            if (input[i].type === "checkbox" && input[i].className === "perspektif") {
+                if (input[i].checked === false) {
+                    isValid = false;
+                } else if (input[i].checked === true) {
+                    isValid = true;
+                    break;
+                }
+            }
+        }
+        return isValid;
+    }
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+            if (!(validateForm())) {
+                console.log("masuk sini");
+                $("#output-error").text("Harap lengkapi semua data.");
+                return;
+            }
+
+            if (!(validateCheckbox())) {
+                console.log(123);
+                $("#output-error").text("Harap lengkapi semua data.");
+                return;
+            }
+
+            // stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // Get form
+            var form = $('#addDelegasiForm')[0];
+
+            // Create an FormData object
+            var data = new FormData(form);
+
+            // disabled the submit button
+            $("#btnSubmit").prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                // enctype: 'multipart/form-data',
+                url: "/delegasi/tambah",
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#output-error").text("");
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#successModal").modal("show")
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+</html>

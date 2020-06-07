@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Templates</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <h1>Ini halaman Templates</h1>
+            <a th:href="@{/logout}">Logout</a>
+            <div class="container">
+                <div class="row mt-2">
+                    <a class="btn primary-button btn-blue" href="#" role="button">Simpan</a>
+                    <a class="ml-2 btn secondary-button btn-outline-blue" href="#" role="button">Kembali</a>
+                    <a class="ml-2 btn primary-button btn-orange" href="#" role="button">Kembali</a>
+                    <a class="ml-2 btn secondary-button btn-outline-orange" href="#" role="button">Kembali</a>
+                </div>
+                <div class="row mt-2">
+                    <table class="table">
+                        <thead class="thead bg-blue">
+                        <tr>
+                            <th scope="col" colspan="4">1. Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) dan pedoman perilaku (code of conduct).</th>
+                            <th scope="col">Bobot</th>
+                            <th scope="col">Tertimbang</th>
+                            <th scope="col">Capaian</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td colspan="3">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) yang ditinjau dan dimutakhirkan  secara berkala.</td>
+                            <td>7.00</td>
+                            <td>3.50</td>
+                            <td>3.50</td>
+                        </tr>
+                        <tr>
+                            <td><button class="btn btn-outline-blue"><i class="material-icons">insert_drive_file</i></button></td>
+                            <th scope="row">1</th>
+                            <td colspan="2">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) dan pedoman perilaku (code of conduct).</td>
+                            <td></td>
+                            <td><button class="btn btn-orange"><i class="material-icons">edit</i></button></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><button class="btn btn-blue"><i class="material-icons">insert_drive_file</i></button></td>
+                            <th scope="row">2</th>
+                            <td colspan="2">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) yang ditinjau dan dimutakhirkan  secara berkala.</td>
+                            <td></td>
+                            <td><button class="btn btn-outline-orange"><i class="material-icons">edit</i></button></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td colspan="3">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) yang ditinjau dan dimutakhirkan  secara berkala.</td>
+                            <td>7.00</td>
+                            <td>3.50</td>
+                            <td>3.50</td>
+                        </tr>
+                        <tr>
+                            <td><button class="btn btn-outline-blue"><i class="material-icons">insert_drive_file</i></button></td>
+                            <th scope="row">1</th>
+                            <td colspan="2">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) dan pedoman perilaku (code of conduct).</td>
+                            <td></td>
+                            <td><button class="btn btn-orange"><i class="material-icons">edit</i></button></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><button class="btn btn-blue"><i class="material-icons">insert_drive_file</i></button></td>
+                            <th scope="row">2</th>
+                            <td colspan="2">Perusahaan memiliki Pedoman Tata Kelola Perusahaan yang Baik (GCG Code) yang ditinjau dan dimutakhirkan  secara berkala.</td>
+                            <td></td>
+                            <td><button class="btn btn-outline-orange"><i class="material-icons">edit</i></button></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

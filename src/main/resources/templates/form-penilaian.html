@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Penilaian</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <form class="form-penilaian" id="addNilai" th:action="@{/lembarkerja/{tahun}/penilaian(tahun=${tahun})}" th:object="${daftarLembarKerjaUntukDinilai}" method="post">
+                <div class="card ml-2 mr-2">
+                    <div class="card-body">
+                        <h5 class="card-title blue-title">Penilaian Dokumen Pemenuhan Good Corporate Governance</h5>
+                        <h6 class="card-subtitle mb-2 orange-subtitle">Perspektif : </h6>
+                        <p class="card-text" th:text='${subperspektif.perspektif}'></p>
+                        <h6 class="card-subtitle mb-2 orange-subtitle">Subperspektif : </h6>
+                        <p class="card-text" th:text='${subperspektif.subperspektif}'></p>
+                        <h6 class="card-subtitle mb-2 orange-subtitle">Dokumen pemenuhan : </h6>
+                        <div class="mt-2 mb-2">
+                            <a th:href="@{/} + downloadFile + '/' + ${submisi.dokumenList[0].id}" style="font-size: 12px;" class="btn btn-xs btn-blue" href="#" role="button"><i class="fas fa-download"></i></a><span class="ml-2" th:text="${submisi.dokumenList[0].fileName}"></span>
+                        </div>
+                        <p class="card-text">Penanggung jawab dokumen : <span th:text="${submisi.uploaderSubmisi.nama}"></span> - <span th:text="${submisi.uploaderSubmisi.userDivisi.nama}"></span></p>
+                        <h6 class="card-subtitle mb-2 orange-subtitle">Komentar : </h6>
+                        <p class="card-text" th:text='${submisi.komentar}'></p>
+                    </div>
+                    <div class="container-fluid ">
+                        <table th:if="${listsubfaktoruji.empty}" class="table table-subperspektif">
+                            <thead style="text-align: center; font-weight: bold; ">
+                                <tr>
+                                    <th scope="col">Subperspektif</th>
+                                    <th scope="col">Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="subfaktoruji-penilaian" th:text="${subperspektif.subperspektif}" ></td>
+                                    <td >
+                                        <input type="hidden" th:field="${daftarLembarKerjaUntukDinilai.daftarLembarKerja[0].id}"/>
+                                        <input type="hidden" name="penilaian" value="subperspektif"  />
+                                        <select name="nilai" class="form-control form-control-sm nilaiSubfaktoruji" th:field="${daftarLembarKerjaUntukDinilai.daftarLembarKerja[0].nilai}">
+                                            <!-- Untuk value di nilai tidak dapat null harus merupakan double, namun di contoller dikelola sebagai null -->
+                                            <option th:if="${subperspektif.nilai} == null" value="0.01">nilai</option>
+                                            <option th:value="0.00">0 %</option>
+                                            <option th:value="0.25">25 %</option>
+                                            <option th:value="0.50">50 %</option>
+                                            <option th:value="0.75">75 %</option>
+                                            <option th:value="1.00">100 %</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!--Subfaktoruji-->
+                        <table th:if="${!listsubfaktoruji.empty}" class="table table-subfaktoruji">
+                            <thead style="text-align: center; font-weight: bold; ">
+
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Subfaktor Uji</th>
+                                    <th scope="col">Nilai</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                <tr th:each="subfaktoruji, iterationStatus:${daftarLembarKerjaUntukDinilai.daftarLembarKerja}">
+                                    <th style="text-align: center;" th:text="${subfaktoruji.noUrut}" scope="row"></th>
+                                    <td id="subfaktoruji-penilaian" th:text="${subfaktoruji.subfaktorUji}"></td>
+                                    <td>
+                                    <input type="hidden" th:field="${daftarLembarKerjaUntukDinilai.daftarLembarKerja[__${iterationStatus.index}__].id}" />
+                                    <input type="hidden" name="penilaian" value="subfaktoruji"  />
+                                    <select name="nilai" class="form-control form-control-sm nilaiSubfaktoruji" th:field="${daftarLembarKerjaUntukDinilai.daftarLembarKerja[__${iterationStatus.index}__].nilai}">
+                                        <!-- Untuk value di nilai tidak dapat null harus merupakan float, namun di contoller dikelola sebagai null -->
+                                        <option th:if="${subfaktoruji.nilai} == null" value="0.01">nilai</option>
+                                        <option th:value="0.00">0 %</option>
+                                        <option th:value="0.25">25 %</option>
+                                        <option th:value="0.50">50 %</option>
+                                        <option th:value="0.75">75 %</option>
+                                        <option th:value="1.00">100 %</option>
+                                    </select>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body row">
+                        <div class="col"></div>
+                        <div class="col" style="text-align: center;" >
+                            <button type="button" class="SubmitButton ml-2 btn primary-button btn-blue" id="btnButton">Simpan</button>
+                            <button type="button" class="SubmitButton ml-2 btn primary-button btn-blue" id="btnNull"  data-toggle="modal" data-target="#nullAlertModal">Simpan</button>
+                            <button type="submit" class="SubmitButton ml-2 btn primary-button btn-blue " id="btnSubmitPenilaian">Simpan</button>
+                            <a class="ml-2 btn secondary-button btn-outline-blue" th:href="@{/lembarkerja/} + ${tahun} + '/1' " role="button">Kembali</a>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="modal fade"  id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Nilai berhasil disimpan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/lembarkerja/} + ${tahun} + '/1' ">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"  id="nullAlertModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fas fa-exclamation-triangle text-orange" style="font-size: xx-large;"></i>
+                            <h5 class="Subtitle-orange mt-4">Masih Terdapat Subperspektif / Subfaktor Uji Yang Belum Dinilai</h5>
+                            <p class="text-black-grey">Silahkan Lengkapi Penilaian</p>
+                            <br>
+                            <button type="button" class="btn btn-orange" data-dismiss="modal">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

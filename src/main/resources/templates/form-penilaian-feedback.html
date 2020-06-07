@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Feedback</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <form th:action="@{/lembarkerja/{tahun}/penilaian/feedback(tahun=${tahun})}" th:object="${submisi}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+                <div class="row">
+                    <div class="form-group col">
+                        <label class="Subtitle-orange">Kelebihan:</label>
+                        <textarea  name="kelebihan" type="text" rows="1" class="form-control content" placeholder="Content"  autocomplete="off" th:field="*{kelebihan}"></textarea>
+                    </div>
+                    <div class="form-group col">
+                        <label class="Subtitle-orange">Kekurangan:</label>
+                        <textarea name="kekurangan"  type="text" rows="1" class="form-control content" placeholder="Content" autocomplete="off" th:field="*{kekurangan}"></textarea>
+                    </div>      
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label class="Subtitle-orange">Referensi:</label>
+                        <textarea  name="referensi" type="text" rows="1" class="form-control content" placeholder="Content"  autocomplete="off" th:field="*{referensi}"></textarea>
+                    </div>    
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label class="Subtitle-orange">Hambatan:</label>
+                        <textarea  name="hambatan" type="text" rows="1" class="form-control content" placeholder="Content"  autocomplete="off" th:field="*{hambatan}"></textarea>
+                    </div>
+                    <div class="form-group col">
+                        <label class="Subtitle-orange">Rekomendasi:</label>
+                        <textarea  name="rekomendasi" type="text" rows="1" class="form-control content" placeholder="Content" autocomplete="off" th:field="*{rekomendasi}"></textarea>
+                    </div>      
+                </div>
+                
+                <button class="btn btn-blue "id="btnButton"  type="button">Simpan feedback</button>
+            </form>
+
+            <div class="modal fade"  id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Nilai dan feedback berhasil disimpan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/lembarkerja/} + ${tahun} + '/1' ">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+
+<script>
+    $('.content').summernote({
+        height: 150,
+        tabsize: 1,
+        toolbar: [
+            // [groupName, [list of button]]
+            ['style', ['bold', 'italic', 'underline']],
+            ['para', ['ul', 'ol']]
+        ]
+    });
+</script>
+</html>

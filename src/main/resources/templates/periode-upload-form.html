@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Upload</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="container p-3" style="background-color: white; border-radius: 5px;">
+                        <h3 class="text-blue text-center font-weight-bold mb-3">Submisi Dokumen</h3>
+                        <div class="upload-content">
+                            <div class="single-upload">
+                                <form id="singleUploadForm" name="singleUploadForm">
+                                    <input id="singleFileUploadInput" type="file" name="file" class="file-input" required/>
+                                    <p style= "color: #6c757d">
+                                        max file 15MB, max attachment 1 file
+                                        format file : .pdf
+                                    </p>
+                                </form>
+                                <div class="upload-response">
+                                    <div id="singleFileUploadError"></div>
+                                    <div id="singleFileUploadSuccess"></div>
+                                </div>
+                            </div>
+                            <form id="submisi" hidden>
+                                <br>
+                                <h4>Nama</h4>
+                                <div class="form-group">
+                                    <textarea name="komentar" id="komentar" type="text" rows="10" cols="100"></textarea>
+                                    <input id="nama" type="hidden" name="id" th:field="${periode.id}">
+                                </div>
+                            </form>
+                            <div class="container-fluid text-center mt-3">
+                                <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                                <button type="button" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                                <a th:href="@{/periode}" role="button" class="btn secondary-button btn-outline-blue">Kembali</a>
+                            </div>
+                    </div>
+                </div>
+                <script src="/js/uploadDownload.js" ></script>
+            </div>
+
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Dokumen berhasil ditambahkan!</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/periode}">Kembali</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+                <!-- The Modal: Loader -->
+                <div class="modal" id="loader" data-backdrop="static">
+                    <div class="modal-dialog modal-dialog-centered d-flex justify-content-center text-center">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+                <!-- END: The Modal -->
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<script>
+    function validateFile(){
+        var file = $("#singleFileUploadInput").val();
+        var extention = ".pdf";
+        if(file.substr(file.length - extention.length, extention.length).toLowerCase() == extention.toLowerCase()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    $('#singleFileUploadInput').on('change', function() {
+        var size = (this.files[0].size / 1024 / 1024).toFixed(2);
+        if(size > 15){
+            $("#output-error").text("Ukuran file maksimal 15MB");
+        }
+        else{
+            $("#output-error").text("");
+        }
+    });
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+            if(!(validateFile())){
+                $("#output-error").text("Format File harus .pdf");
+                return;
+            }
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // disabled the submit button
+            $("#btnSubmit").prop("disabled", true);
+
+            // ## Form Save Submisi
+            // Get form
+            var formArsip = $('#submisi')[0];
+
+            // Create an FormData object
+            var dataArsip = new FormData(formArsip);
+
+            // Create dummy
+            var idArsip = 0;
+
+            $.ajax({
+                type: "POST",
+                // enctype: 'multipart/form-data',
+                url: "/api/arsip/tambah/" + $('#nama').val(),
+                data: dataArsip,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    idArsip = data.idArsip;
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+
+            // ## Form Upload Dokumen
+            // Get form
+            var formDokumen = $('#singleUploadForm')[0];
+
+            // Create an FormData object
+            var dataDokumen = new FormData(formDokumen);
+
+            $.ajax({
+                type: "POST",
+                // enctype: 'multipart/form-data',
+                url: "/api/arsip/upload/" + idArsip,
+                data: dataDokumen,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                beforeSend: function(){
+                    $("#loader").show();
+                },
+                success: function (data) {
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#loader").hide();
+                    $("#successModal").modal("show")
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+<!-- End of scripts / JS-->
+
+</body>
+</html>
+
+

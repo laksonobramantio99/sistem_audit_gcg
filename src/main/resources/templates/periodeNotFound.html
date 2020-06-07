@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Not Found</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <th:block th:if="${message == null}">
+                <h1 class="Subtitle-blue">Periode Penilaian Tidak Ditemukan </h1>
+            </th:block>
+            <h1 class="Subtitle-blue" th:text="${message}">Periode Penilaian Tidak Ditemukan </h1>
+
+            <th:block th:if="${description == null}">
+                <p class="text-orange" >Apabila terdapat kesalahan, silahkan hubungi admin atau pilih periode penilaian lainnya</p>
+            </th:block>
+            <p class="text-orange" th:text="${description}">Apabila terdapat kesalahan, silahkan hubungi admin atau pilih periode penilaian lainnya</p>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

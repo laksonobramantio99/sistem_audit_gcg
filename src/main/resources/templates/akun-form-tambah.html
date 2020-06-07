@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Tambah Akun</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <div class="row">
+
+                <div class="col-sm-8">
+                    <div class="container p-3" style="background-color: white; border-radius: 5px;">
+                        <h3 class="text-blue font-weight-bold mb-3">Form Tambah Akun</h3>
+                        <form id="addUserForm" action="javascript:void(0);">
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Username</label>
+                                <input type="text" name="username" class="form-control" placeholder="Username" id="username" pattern="[a-zA-Z0-9]+" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Nama Lengkap</label>
+                                <input type="text" name="nama" class="form-control" placeholder="Nama Lengkap" id="namaLengkap" required pattern="[a-zA-Z0-9]+">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Password</label>
+                                <input type="password" name="password" class="form-control" placeholder="Password" id="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Konfirmasi Password</label>
+                                <input type="password" class="form-control" placeholder="Konfirmasi Password" id="confirmPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Role</label>
+                                <select class="form-control" name="userRole" required>
+                                    <option selected value="">-- Role --</option>
+                                    <option th:each="role : ${roleList}"
+                                            th:text="${role.nama}"
+                                            th:value="${role.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Divisi</label>
+                                <select class="form-control" name="userDivisi" required>
+                                    <option selected value="">-- Divisi --</option>
+                                    <option th:each="divisi : ${divisiList}"
+                                            th:text="${divisi.nama}"
+                                            th:value="${divisi.id}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="container-fluid text-center mt-3">
+                                <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                                <button type="submit" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                                <a th:href="@{/user}" role="button" class="btn secondary-button btn-outline-blue">Kembali</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <script src="/js/uploadDownload.js" ></script>
+            </div>
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Akun berhasil ditambahkan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/user}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script type="text/javascript">
+
+    function validateForm() {
+        var isValid = true;
+        $('.form-control').each(function() {
+            if ( $(this).val() === '' ) {
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+
+    function validateUsername() {
+        var username = $("#username").val();
+        var regex = /^[a-zA-Z0-9]+$/;
+        var result = regex.test(username);
+        return result
+    }
+
+    function validateNamaLengkap() {
+        var namaLengkap = $("#namaLengkap").val();
+        var regex = /^[a-zA-Z ]+$/;
+        var result = regex.test(namaLengkap);
+        return result
+    }
+
+    function checkMinLengthPassword() {
+        var password = $("#password").val();
+        var confirmPassword = $("#confirmPassword").val();
+        if (password.length >= 8 && confirmPassword.length >= 8) {
+            return true;
+        }   
+        return false;
+    }
+
+    function checkPasswordMatch() {
+        var password = $("#password").val();
+        var confirmPassword = $("#confirmPassword").val();
+        if (password !== confirmPassword) {
+            return false;
+        }
+        return true;
+    }
+
+    function checkUsernameIsAvailable() {
+        var isAvailable = false;
+        $.ajax({
+            type: 'GET',
+            url: '/api/user/isAvailable/' + $('#username').val(),
+            async: false,
+            dataType: 'json',
+            processData: false,
+            cache: false,
+            success: function (data) {
+                isAvailable = data.isAvailable;
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+            }
+        });
+        return isAvailable;
+    }
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+            if (!(validateForm())) {
+                $("#output-error").text("Harap lengkapi semua field.");
+                return;
+            }
+            if (!(validateUsername())) {
+                $("#output-error").text("Username hanya dapat diisi huruf dan angka.");
+                return;
+            }
+            if (!(validateNamaLengkap())) {
+                $("#output-error").text("Nama lengkap hanya dapat diisi huruf dan spasi.");
+                return;
+            }
+            if (!(checkPasswordMatch())) {
+                $("#output-error").text("Password dan konfirmasi password yang diisi tidak sesuai/match.");
+                return;
+            }
+            if (checkUsernameIsAvailable()) {
+                $("#output-error").text("Username yang diisi telah digunakan.");
+                return;
+            }
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // Get form
+            var form = $('#addUserForm')[0];
+
+            // Create an FormData object
+            var data = new FormData(form);
+
+            // disabled the submit button
+            $("#btnSubmit").prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                // enctype: 'multipart/form-data',
+                url: "/user/tambah",
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#output-error").text("");
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#successModal").modal("show")
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

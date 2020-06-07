@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Daftar Parameter Penilaian</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            </div>
+            <div class="mt-2 container-fluid" >
+                <div class="ml-2 mb-3 row" th:if="${!listIndikator.empty}" >
+                    <h2 class="text-blue font-weight-bold col-9 my-auto " style="font-size: large; margin-bottom: 0 !important;" th:text="'Daftar Parameter Penilaian Periode ' + ${tahun}" ></h2>
+                    <div class="col my-auto align-self-end">
+                        <label for="pilihperiodepenilaian" class="Subtitle-orange" style="font-size: x-small;">Tampilkan penilaian periode lainnya </label>
+                        <div class="input-group">
+                            <select class="custom-select" id="pilihperiodepenilaian" style="font-size: xx-small;">
+                                <div  th:each="periode, indikatorIterationStatus : *{listPeriode}">
+                                    <option th:value="${periode.tahun}" th:text="${periode.tahun}"></option>
+                                </div>
+                            </select>
+                            <div class="input-group-append">
+                              <a id="lihatPenilaianLainnya" class="btn bg-blue" href="/periode" type="button" style="font-size: xx-small;" data-toggle="tooltip" data-placement="bottom" title="Tampilkan Lembar Penilaian"><i class="fas fa-search"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div th:if="${listIndikator.empty}" class="container-fluid my-auto text-center row" style="margin-top: 25vh !important;">
+                    <div class="col-2"></div>
+                    <div class="col">
+                        <p class=" Subtitle-blue">Anda tidak memiliki perspektif yang didelegasikan pada periode dan aspek ini. Apabila terdapat kesalahan, silahkan hubungi admin atau pilih periode penilaian lainnya</p>
+                        <div class="col my-auto align-self-end">
+                            <label for="pilihperiodepenilaian" class="Subtitle-orange" style="font-size: x-small;">Tampilkan penilaian periode lainnya </label>
+                            <div class="input-group" style="padding-left:12vw; padding-right: 12vw;">
+                                <select class="custom-select" id="pilihperiodepenilaian" style="font-size: xx-small;">
+                                    <div  th:each="periode, indikatorIterationStatus : *{listPeriode}">
+                                        <option th:value="${periode.tahun}" th:text="${periode.tahun}"></option>
+                                    </div>
+                                </select>
+                                <div class="input-group-append">
+                                  <a id="lihatPenilaianLainnya" class="btn bg-blue" href="/periode" type="button" style="font-size: xx-small;"><i class="fas fa-search"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+
+                   
+                </div>
+
+
+
+                <table th:if="${!listIndikator.empty}" class="table ml-3 mr-2" style="background-color: white">
+                    <thead style="font-size: small;">
+                        <tr class="Subtitle-orange" style="background-color: #F6F5FB;">
+                            <th scope="col" colspan="6">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="myInput">Cari Parameter</label>
+                                        <input class="form-control form-control-sm " id="myInput" type="text" placeholder="Masukan nama indikator, perspektif atau subperspektif">
+                                    </div>
+                                    <div class="col">
+                                        <label for="filter">Filter Parameter Penilaian </label>
+                                        <select  id="filter" class="form-control form-control-sm filterParameter">
+                                            <option value="semua">Semua Parameter Penilaian</option>
+                                            <option value="belum dinilai">Parameter Penilaian yang belum dinilai</option>
+                                            <option value="dokumen belum dikumpulkan">Parameter Penilaian yang belum memiliki dokumen pemenuhan</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                            </th>
+
+                            <th scope="col"></th>
+                            <th scope="col">Bobot</th>
+                            <th scope="col">Tertimbang</th>
+                            <th scope="col">Capaian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myTable" style="font-size: small;">
+                        <tr class="aspek" tipe="aspek">
+                            <th scope="col" colspan="6" th:text="${aspek.aspek}"></th>
+                            <th scope="col"></th>
+                            <th scope="col" th:text="${aspek.bobot}"></th>
+                            <th scope="col" th:text="${#numbers.formatDecimal(aspek.tertimbang, 1, 3)}" class="text-center"></th>
+                            <th scope="col" th:text="${aspek.nilai}!=null ? ${#numbers.formatDecimal(aspek.nilai*100, 0, 2) + '%'} : '-'"></th>
+                        </tr>
+                        <div th:each="indikator, indikatorIterationStatus : *{listIndikator}">
+                            <tr data-toggle="collapse" th:href="'.collapse' + ${indikatorIterationStatus.index}" th:id="'indikator'+${indikator.noUrut}" class="thead bg-blue indikator" tipe="indikator" >
+                                <th style="text-align: center">
+                                    <a style="color: white;" href="javascript:void(0)"><i class="fas fa-caret-down"></i></a>
+                                </th>
+                                <th scope="col" class="noUrut" th:text='${indikator.noUrut}'></th>
+                                <th scope="col" class="parameterPenilaian" colspan="4" th:text="${indikator.indikator}"></th>
+                                <th scope="col"></th>
+                                <th scope="col" th:text="${indikator.bobot}"></th>
+                                <th scope="col" th:text="${#numbers.formatDecimal(indikator.tertimbang, 1, 3)}" class="text-center"></th>
+                                <th scope="col" th:text="${indikator.nilai}!=null ? ${#numbers.formatDecimal(indikator.nilai*100, 0, 2) + '%'} : '-'"></th>
+                            </tr>
+                            <div th:each="daftarPerspektif, perspektifIterationStatus : *{listPerspektif}">
+                                <div th:if="${indikatorIterationStatus.index == perspektifIterationStatus.index}"
+                                    th:each="perspektif, perspektifindex : *{daftarPerspektif}">
+                                        <tr  th:id="'perspektif'+${perspektif.noUrut}"  th:attr="parent='indikator'+${indikator.noUrut}"  class="bg-orange collapse show perspektif" tipe="perspektif"
+                                        th:classappend="${(' collapse'+indikatorIterationStatus.index)}">
+                                            <th colspan="2"></th>
+                                            <th class="noUrut" scope="row" th:text="${perspektif.noUrut}"></th>
+                                            <th class="parameterPenilaian" colspan="3" th:text="${perspektif.perspektif}"></td>
+                                            <th scope="col"></th>
+                                            <th scope="col" th:text="${perspektif.bobot}"></th>
+                                            <th scope="col" th:text="${#numbers.formatDecimal(perspektif.tertimbang, 1, 3)}" class="text-center"></th>
+                                            <th scope="col" th:text="${perspektif.nilai}!=null ? ${#numbers.formatDecimal(perspektif.nilai*100, 0, 2) + '%'} : '-'"></th>
+                                        </tr>
+
+                                    <div th:each="listSubperspektifByIndikator, listSubperspektifByIndikatorIteration : *{listSubperspektif}" >
+                                        <div th:if="${listSubperspektifByIndikatorIteration.index == indikatorIterationStatus.index}" class="collapse-show"
+                                            th:each="listSubperspektifByPerspektif, listSubperspektifByPerspektifIterationStatus : *{listSubperspektifByIndikator}">
+                                            <tr th:id="'subperspektif'+${subperspektif.noUrut}"  th:attr="parent='perspektif'+${perspektif.noUrut}" class="collapse show subperspektif" 
+                                            th:classappend="${(!subperspektif.SubmisiLembarKerjaList.empty AND subperspektif.nilai != null ? 'sudahDinilai' : 'belumDinilai') + (' collapse'+indikatorIterationStatus.index) + (!subperspektif.SubmisiLembarKerjaList.empty ? ' terdapatDokumen' : ' tidakTerdapatDokumen')}" th:if="${perspektifindex.index == listSubperspektifByPerspektifIterationStatus.index}"
+                                                th:each="subperspektif, listSubperspektif : *{listSubperspektifByPerspektif}" tipe="subperspektif">
+                                                <div sec:authorize="hasAnyAuthority('Admin', 'Tim Pelaksana', 'Auditor Internal')">
+                                                    <td th:if="${!subperspektif.SubmisiLembarKerjaList.empty}" scope="col" ><a th:href="@{'/submisi/'+ ${subperspektif.periodeLembarKerja.tahun} +'/lihat/' + ${subperspektif.id}}" class="btn btn-xs btn-blue" data-toggle="tooltip" data-placement="bottom" title="Edit Dokumen Pemenuhan"><i class="fas fa-file"></i></a></td>
+                                                    <td th:if="${subperspektif.SubmisiLembarKerjaList.empty} AND ${periode.isEnded} == false" scope="col" ><a th:href="@{'/submisi/'} + ${subperspektif.periodeLembarKerja.tahun} + '/upload/' + ${subperspektif.id}" class="btn btn-xs btn-outline-blue" data-toggle="tooltip" data-placement="bottom" title="Unggah Dokumen Pemenuhan"><i class="fas fa-file"></i></a></td>
+                                                    <td th:if="${subperspektif.SubmisiLembarKerjaList.empty} AND ${periode.isEnded} == true" ></td>  
+                                                </div>
+                                                <div sec:authorize="hasAnyAuthority('Auditor Eksternal')">
+                                                    <td></td>
+                                                </div>
+                                                <td scope="col" ></td>
+                                                <td scope="col" ></td>
+                                                <th class="noUrut" scope="row" th:text="${subperspektif.noUrut}"></th>
+                                                <td class="parameterPenilaian" scope="col" colspan="2" th:text="${subperspektif.subperspektif}"></td>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <div sec:authorize="hasAnyAuthority('Auditor Eksternal', 'Auditor Internal')" th:if="${periode.isEnded} == false" style="text-align: center">
+                                                    <div th:if="${!subperspektif.SubmisiLembarKerjaList.empty} AND ${subperspektif.nilai} == null">
+                                                        <th class="text-center"><a class="btn btn-outline-orange" style="size: 1pz;" th:href="@{/lembarkerja/} + ${subperspektif.periodeLembarKerja.tahun} + '/penilaian/' + ${subperspektif.id}" role="button" data-toggle="tooltip" data-placement="bottom" title="Menilai Subperspektif"><i class="fas fa-pen"></i></a></th>
+                                                    </div>
+                                                    <div th:if="${!subperspektif.SubmisiLembarKerjaList.empty} AND ${subperspektif.nilai} != null">
+                                                        <th class="text-center" ><a class="btn btn-orange text-center"  th:href="@{/lembarkerja/} + ${subperspektif.periodeLembarKerja.tahun} + '/penilaian/' + ${subperspektif.id}" role="button" data-toggle="tooltip" data-placement="bottom" title="Edit Penilaian Subperspektif"><i class="fas fa-pen"></i></a></th>
+                                                    </div>
+                                                    <div th:if="${subperspektif.SubmisiLembarKerjaList.empty}">
+                                                        <th></th>
+                                                    </div>
+                                                </div>
+                                                <td th:if="${periode.isEnded} == true"></td>
+                                                <div sec:authorize="hasAnyAuthority('Admin', 'Tim Pelaksana', 'Staf Corsec')"  th:if="${periode.isEnded} == false" style="text-align: center">
+                                                    <th scope="col" class="text-center"></th>
+                                                </div>
+                                                <th scope="col"  th:text="${subperspektif.nilai}!=null ? ${#numbers.formatDecimal(subperspektif.nilai*100, 0, 0) + '%'} : '-'"></th>
+
+                                            </tr>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- END: ISI KONTEN -->
+            
+        </div>
+    </div>
+    
+
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script>
+$(document).ready(function(){
+    var url = window.location.href; // http://localhost:8080/lembarkerja/2019/1
+    var tahun = url.split("/")[4]; // 2019
+
+    $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+
+    $("#myTable tr").filter(function() {
+        var isMatch = $(this).text().toLowerCase().indexOf(value) > -1
+        console.log(value + " " + isMatch)
+        parent = $(this).attr("parent")
+
+        if($(this).attr("tipe")=="aspek"){
+            $(this).show();
+            return;
+        }
+
+        if($('#' + parent).is(":visible")){
+            var isParentMatch = $('#' + parent).text().toLowerCase().indexOf(value) > -1
+            
+            if(isParentMatch) {
+                $(this).show();
+                return;
+            }
+           
+            if($(this).attr("tipe")=="subperspektif"){
+                indikatorParent = $('#' + parent).attr("parent");
+                isIndikatorMatch = $('#' + indikatorParent).text().toLowerCase().indexOf(value) > -1
+                if(isIndikatorMatch){
+                    $(this).show();
+                    return;
+                }
+            }
+            
+        }
+       
+        if(isMatch == true){
+            $(this).show();
+            if($(this).attr("tipe")=="indikator"){
+                
+            }
+
+            else if($(this).attr("tipe")=="perspektif"){
+                $('#'+parent).show();
+            }
+            else if($(this).attr("tipe")=="subperspektif"){
+                $('#'+parent).show();
+                IndikatorParent =  $('#'+parent).attr("parent");
+                $('#' + IndikatorParent).show();
+            }
+        }
+        else{
+            $(this).hide()
+        }
+    
+    });
+  });
+
+
+    $("#pilihperiodepenilaian").val(tahun);
+    var periodeUrl = "/lembarkerja/" + tahun + "/1";
+    $("#lihatPenilaianLainnya").attr("href", periodeUrl);
+
+    $("#pilihperiodepenilaian").change(function () {
+        tahun =  $(this).val();
+        periodeUrl = "/lembarkerja/" + tahun + "/1";
+        $("#lihatPenilaianLainnya").attr("href", periodeUrl);
+    });
+
+    $(".filterParameter").change(function(){
+      if($(this).val() == "belum dinilai"){
+        $(".subperspektif").hide()
+        $(".subperspektif.belumDinilai.terdapatDokumen").show();
+      }
+      else if($(this).val() == "semua"){
+        $(".subperspektif").show();
+      }
+      else if($(this).val() == "dokumen belum dikumpulkan"){
+        $(".subperspektif").hide()
+        $(".subperspektif.tidakTerdapatDokumen").show();
+      }
+  });
+
+});
+
+
+</script>
+<!-- End of scripts / JS-->
+
+
+</body>
+</html>

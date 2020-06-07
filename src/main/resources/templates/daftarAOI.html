@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Daftar Parameter Penilaian</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+        </div>
+        <div class="mt-2 container-fluid" >
+            <div class="ml-2 mb-3 row" th:if="${!listIndikator.empty}" >
+                <h2 class="text-blue font-weight-bold col-9 my-auto " style="font-size: large; margin-bottom: 0 !important;" th:text="'Daftar AOI Aspek ' +  ${aspek.noUrut} + ' Periode Penilaian ' + ${tahun}" ></h2>
+            </div>
+
+            <div th:if="${listIndikator.empty}" class="container-fluid my-auto text-center row" style="margin-top: 25vh !important;">
+                <div class="col-2"></div>
+                <div class="col">
+                    <p class=" Subtitle-blue">Tidak terdapat AOI pada parameter penilaian untuk aspek ini.</p>
+                    <div class="col my-auto align-self-end">
+                        <label for="pilihperiodepenilaian" class="Subtitle-orange" style="font-size: x-small;">Tampilkan aspek penilaian lainnya </label>
+                        <div class="input-group" style="padding-left:12vw; padding-right: 12vw;">
+                            <select class="custom-select" id="pilihperiodepenilaian" style="font-size: xx-small;">
+                                <div  th:each="aspek, indikatorIterationStatus : *{listAspek}">
+                                    <option th:value="${aspek.noUrut}" th:text="'Aspek ' + ${aspek.noUrut}"></option>
+                                </div>
+                            </select>
+                            <div class="input-group-append">
+                                <a id="lihatPenilaianLainnya" class="btn bg-blue" type="button" style="font-size: xx-small;"><i class="fas fa-search"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+
+
+            </div>
+
+
+
+            <table th:if="${!listIndikator.empty}" class="table ml-3 mr-2" style="background-color: white; width: 98%;">
+                <thead style="font-size: small;">
+                <tr class="Subtitle-orange" style="background-color: #F6F5FB;">
+                    <th scope="col" colspan="6">
+                        <div class="row">
+                            <div class="col">
+                                <label for="myInput">Cari Parameter</label>
+                                <input class="form-control form-control-sm " id="myInput" type="text" placeholder="Masukan nama indikator, perspektif atau subperspektif">
+                            </div>
+                            <div class="col">
+                                <label for="filter">Pilih aspek penilaian lainnya</label>
+                                <div class="input-group">
+                                    <select  id="pilihperiodepenilaian" class="form-control form-control-sm filterParameter">
+                                        <div  th:each="aspek, indikatorIterationStatus : *{listAspek}">
+                                            <option th:value="${aspek.noUrut}" th:text="'Aspek ' + ${aspek.noUrut}"></option>
+                                        </div>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <a id="lihatPenilaianLainnya"  class="btn bg-blue" type="button" style="font-size: xx-small;" data-toggle="tooltip" data-placement="bottom" title="Tampilkan Lembar Penilaian"><i class="fas fa-search"></i></a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </th>
+                    <th scope="col">Bobot</th>
+                    <th scope="col" class="text-center">AOI</th>
+                    <th scope="col">Capaian</th>
+                    
+                </tr>
+                </thead>
+                <tbody id="myTable" style="font-size: small;">
+                <tr class="aspek" tipe="aspek">
+                    <th scope="col" colspan="6" th:text="${aspek.aspek}"></th>
+                    <th scope="col" th:text="${aspek.bobot}"></th>
+                    <th scope="col"></th>
+                    <th scope="col" th:text="${aspek.nilai}!=null ? ${#numbers.formatDecimal(aspek.nilai*100, 0, 2) + '%'} : '-'"></th>
+
+                </tr>
+                <div th:each="indikator, indikatorIterationStatus : *{listIndikator}">
+                    <tr data-toggle="collapse" th:href="'.collapse' + ${indikatorIterationStatus.index}" th:id="'indikator'+${indikator.noUrut}" class="thead bg-blue indikator" tipe="indikator" >
+                        <th style="text-align: center">
+                            <a style="color: white;" href="javascript:void(0)"><i class="fas fa-caret-down"></i></a>
+                        </th>
+                        <th scope="col" class="noUrut" th:text='${indikator.noUrut}'></th>
+                        <th scope="col" class="parameterPenilaian" colspan="4" th:text="${indikator.indikator}"></th>
+                        <th scope="col" th:text="${indikator.bobot}"></th>
+                        <th scope="col"></th>
+                        <th scope="col" th:text="${indikator.nilai}!=null ? ${#numbers.formatDecimal(indikator.nilai*100, 0, 2) + '%'} : '-'"></th>
+
+                    </tr>
+                    <div th:each="daftarPerspektif, perspektifIterationStatus : *{listPerspektif}">
+                        <div th:if="${indikatorIterationStatus.index == perspektifIterationStatus.index}"
+                             th:each="perspektif, perspektifindex : *{daftarPerspektif}">
+                            <tr  th:id="'perspektif'+${perspektif.noUrut}"  th:attr="parent='indikator'+${indikator.noUrut}"  class="bg-orange collapse show perspektif" tipe="perspektif"
+                                 th:classappend="${(' collapse'+indikatorIterationStatus.index)}">
+                                <th colspan="2"></th>
+                                <th class="noUrut" scope="row" th:text="${perspektif.noUrut}"></th>
+                                <th class="parameterPenilaian" colspan="3" th:text="${perspektif.perspektif}"></td>
+                                <th scope="col" th:text="${perspektif.bobot}"></th>
+                                <th scope="col"></th>
+                                <th scope="col" th:text="${perspektif.nilai}!=null ? ${#numbers.formatDecimal(perspektif.nilai*100, 0, 2) + '%'} : '-'"></th>
+
+                            </tr>
+
+                            <div th:each="listSubperspektifByIndikator, listSubperspektifByIndikatorIteration : *{listSubperspektif}" >
+                                <div th:if="${listSubperspektifByIndikatorIteration.index == indikatorIterationStatus.index}" class="collapse-show"
+                                     th:each="listSubperspektifByPerspektif, listSubperspektifByPerspektifIterationStatus : *{listSubperspektifByIndikator}">
+                                    <tr th:id="'subperspektif'+${subperspektif.noUrut}"  th:attr="parent='perspektif'+${perspektif.noUrut}" class="collapse show subperspektif"
+                                        th:classappend="${(!subperspektif.SubmisiLembarKerjaList.empty AND subperspektif.nilai != null ? 'sudahDinilai' : 'belumDinilai') + (' collapse'+indikatorIterationStatus.index) + (!subperspektif.SubmisiLembarKerjaList.empty ? ' terdapatDokumen' : ' tidakTerdapatDokumen')}" th:if="${perspektifindex.index == listSubperspektifByPerspektifIterationStatus.index}"
+                                        th:each="subperspektif, listSubperspektif : *{listSubperspektifByPerspektif}" tipe="subperspektif">
+                                        <td></td>
+                                        <td scope="col" ></td>
+                                        <td scope="col" ></td>
+                                        <th class="noUrut" scope="row" th:text="${subperspektif.noUrut}"></th>
+                                        <td class="parameterPenilaian" scope="col" colspan="2" th:text="${subperspektif.subperspektif}"></td>
+                                        <th scope="col"></th>
+                                        <td scope="col" ><button th:id="${subperspektif.id}" type="button" class="btn btn-blue btn-detail " data-toggle="tooltip" data-placement="bottom" title="Lihat AOI "><i class="fas fa-search"></i></button></td>
+                                        <th scope="col" th:text="${subperspektif.nilai}!=null ? ${#numbers.formatDecimal(subperspektif.nilai*100, 0, 1) + '%'} : '-'"></th>
+
+
+                                    </tr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </tbody>
+            </table>
+            <a type="button"  class="ml-3 mb-5 btn btn-blue " href="/dashboard" style=" font-weight: bold;" >Kembali</a>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal fade" id="successModal" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal body -->
+                    <div class="modal-body text-center container-fluid ">
+                        <h4 class="Subtitle-blue p-3">Aspect Of Improvement</h4>
+
+                        <h5 class="text-orange" style="font-weight: bold;text-align: left; ">Kelebihan: </h5>
+                        <p id="kelebihan" style="text-align: left"></p>
+
+                        <h5 class="text-orange" style="font-weight: bold;text-align: left; ">Kekurangan: </h5>
+                        <p id="kekurangan" style="text-align: left"></p>
+
+                        <h5 class="text-orange" style="font-weight: bold;text-align: left; ">Rekomendasi: </h5>
+                        <p id="rekomendasi" style="text-align: left"></p>
+
+                        <h5 class="text-orange" style="font-weight: bold;text-align: left; ">Hambatan: </h5>
+                        <p id="hambatan" style="text-align: left"></p>
+
+                        <h5 class="text-orange" style="font-weight: bold;text-align: left; ">Referensi: </h5>
+                        <p id="referensi" style="text-align: left"></p>
+
+                        <br>
+                        <a type="button"  class="btn btn-outline-orange text-orange" style="color: #F16522 !important; font-weight: bold;" data-dismiss="modal">Kembali</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- END: ISI KONTEN -->
+
+    </div>
+</div>
+
+
+<!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script>
+    $(document).ready(function(){
+        var url = window.location.href; // http://localhost:8080/lembarkerja/2019/AOI/1
+        var tahun = url.split("/")[4]; // 2019
+        var no_aspek = url.split("/")[6]; //1
+
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+
+            $("#myTable tr").filter(function() {
+                var isMatch = $(this).text().toLowerCase().indexOf(value) > -1
+                console.log(value + " " + isMatch)
+                parent = $(this).attr("parent")
+
+                if($(this).attr("tipe")=="aspek"){
+                    $(this).show();
+                    return;
+                }
+
+                if($('#' + parent).is(":visible")){
+                    var isParentMatch = $('#' + parent).text().toLowerCase().indexOf(value) > -1
+
+                    if(isParentMatch) {
+                        $(this).show();
+                        return;
+                    }
+
+                    if($(this).attr("tipe")=="subperspektif"){
+                        indikatorParent = $('#' + parent).attr("parent");
+                        isIndikatorMatch = $('#' + indikatorParent).text().toLowerCase().indexOf(value) > -1
+                        if(isIndikatorMatch){
+                            $(this).show();
+                            return;
+                        }
+                    }
+
+                }
+
+                if(isMatch == true){
+                    $(this).show();
+                    if($(this).attr("tipe")=="indikator"){
+
+                    }
+
+                    else if($(this).attr("tipe")=="perspektif"){
+                        $('#'+parent).show();
+                    }
+                    else if($(this).attr("tipe")=="subperspektif"){
+                        $('#'+parent).show();
+                        IndikatorParent =  $('#'+parent).attr("parent");
+                        $('#' + IndikatorParent).show();
+                    }
+                }
+                else{
+                    $(this).hide()
+                }
+
+            });
+        });
+
+        $("#pilihperiodepenilaian").val(no_aspek);
+
+        //http://localhost:8080/lembarkerja/2019/AOI/1
+        var AspekUrl = "/lembarkerja/" + tahun + "/AOI/" + no_aspek;
+        $("#lihatPenilaianLainnya").attr("href", AspekUrl);
+
+        $("#pilihperiodepenilaian").change(function () {
+            no_aspek =  $(this).val();
+            AspekUrl = "/lembarkerja/" + tahun + "/AOI/" + no_aspek;
+            $("#lihatPenilaianLainnya").attr("href", AspekUrl);
+        });
+
+        $(".btn-detail").click(function (event) {
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // Create dummy
+
+            var idSubperspektif = $(this).attr('id');
+            var idSubmisi = getLastSubmission(tahun,idSubperspektif);
+            console.log("id subm",idSubmisi);
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/api/submisi/getAoi/" + idSubmisi,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    //idSubmisi = data.idSubmisi;
+                    $("#kelebihan").html(data.kelebihan);
+                    $("#kekurangan").html(data.kekurangan);
+                    $("#hambatan").html(data.hambatan);
+                    $("#rekomendasi").html(data.rekomendasi);
+                    $("#referensi").html(data.referensi);
+
+                    console.log(data.kelebihan);
+                    $("#successModal").modal("show")
+                    // $("#output-error").text("");
+                    // $("#btnSubmit").prop("disabled", false);
+
+                },
+                error: function (e) {
+                    console.log("ERROR CHECK 2 " + idSubmisi);
+                    console.log("ERROR CHECK: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+
+        });
+    });
+
+    function getLastSubmission(tahun,idSubperspektif) {
+        var getLastSubmissonIdApi = "/api/lembarkerja/"  + tahun + "/getAOI/" + idSubperspektif;
+        var idSubmisi = null;
+        console.log(getLastSubmissonIdApi);
+        $.ajax({
+                type: "GET",
+                url: getLastSubmissonIdApi,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    idSubmisi=data.idSubmisi
+
+                },
+                error: function (e) {
+                    console.log("ERROR CHECK 4 " + idSubmisi);
+                }
+            });
+        console.log("id ",idSubmisi);
+
+
+
+        return idSubmisi;
+    }
+
+</script>
+<!-- End of scripts / JS-->
+
+
+</body>
+</html>

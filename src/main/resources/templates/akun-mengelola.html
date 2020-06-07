@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <!-- End of CSS -->
+
+    <!-- Datatables   -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+
+    <!-- TITLE PAGE -->
+    <title>Pengelolaan Akun</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-2">
+            <!-- ISI KONTEN -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active">Akun</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/divisi">Divisi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/role">Role</a>
+                </li>
+            </ul>
+            <div class="container-fluid py-2" style="background-color: white;">
+
+                <h2 class="text-blue font-weight-bold mb-3 ">Pengelolaan Akun</h2>
+                <a th:href="@{/user/tambah}">
+                    <button type="button" class="btn btn-orange font-weight-bold mb-3">+ Tambah Akun</button>
+                </a>
+                <div class="table-responsive py-3" style="background-color: #ffffff; border-radius: 5px">
+                    <table id="myTable" class="table table-hover">
+                        <thead>
+                        <tr class="text-blue text-center">
+                            <th>No.</th>
+                            <th>Username</th>
+                            <th>Nama Lengkap</th>
+                            <th>Role</th>
+                            <th>Divisi</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user, iterStat : ${userList}">
+                            <td th:text="${iterStat.count}"></td>
+                            <td th:text="${user.username}"></td>
+                            <td th:text="${user.nama}"></td>
+                            <td th:text="${user.userRole.nama}"></td>
+                            <td th:text="${user.userDivisi.nama}"></td>
+                            <td>
+                                <a role="button" class="btn btn-blue primary-button mr-2" th:href="@{'/user/ubah/' + ${user.id}}"
+                                   data-toggle="tooltip" title="Edit akun">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                                <button th:if="${user.activeFlag}" role="button" class="deactivate btn btn-orange mr-2"
+                                        th:value="${user.id}" data-toggle="tooltip" title="Nonaktifkan akun">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                                <button th:if="${!user.activeFlag}" role="button" class="activate btn btn-grey mr-2"
+                                        th:value="${user.id}" data-toggle="tooltip" title="Aktifkan akun">
+                                    <i class="fas fa-power-off"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- The Modal: Deactivate -->
+            <div class="modal fade" id="deactivateModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5 px-4">
+                            <i class="fa fa-exclamation-triangle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h5 class="text-orange">Apakah Anda yakin akan menonaktifkan akun ini?</h5>
+                            <br>
+                            <button type="button" class="btn primary-button btn-orange" id="btnDeactivate" style="width: 100px">Ya</button>
+                            <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal" style="width: 100px">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal: Activate -->
+            <div class="modal fade" id="activateModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5 px-4">
+                            <i class="fa fa-exclamation-triangle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h5 class="text-orange">Apakah Anda yakin akan mengaktifkan akun ini?</h5>
+                            <br>
+                            <button type="button" class="btn primary-button btn-orange" id="btnActivate" style="width: 100px">Ya</button>
+                            <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal" style="width: 100px">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal: Success Activation -->
+            <div class="modal fade" id="successActivationModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Akun berhasil diaktifkan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/user}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal: Success Deactivation -->
+            <div class="modal fade" id="successDeactivationModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Akun berhasil dinonaktifkan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/user}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+<!-- End of scripts / JS-->
+<script>
+    // Datatables
+    $(document).ready( function () {
+        var idUserSelected = 0;
+
+        $('#myTable').DataTable();
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#myTable tbody').on('click', '.activate', function (event) {
+            $("#activateModal").modal("show");
+            idUserSelected = $(this).attr('value');
+        });
+
+        $('#myTable tbody').on('click', '.deactivate', function (event) {
+            $("#deactivateModal").modal("show");
+            idUserSelected = $(this).attr('value');
+        });
+
+        // POST Activate
+        $("#btnActivate").click(function (event) {
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+            $(this).prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/user/aktivasi/" + idUserSelected,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#activateModal").modal("hide");
+                    $("#successActivationModal").modal("show");
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        });
+
+        // POST Deactivate
+        $("#btnDeactivate").click(function (event) {
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+            $(this).prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/user/deaktivasi/" + idUserSelected,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#deactivateModal").modal("hide");
+                    $("#successDeactivationModal").modal("show");
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+INSERT INTO periode_tahun VALUES
+    (1.0,1.0,'2020-03-03 00:00:00',0.0,2019.0,1.0);

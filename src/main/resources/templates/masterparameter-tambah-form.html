@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Tambah Parameter</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="container p-3" style="background-color: white; border-radius: 5px;">
+                        <h3 class="text-blue font-weight-bold mb-3">Form Tambah Parameter Penilaian GCG</h3>
+                        <form id="addUserForm">
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Nama Parameter</label>
+                                <input type="text" name="nama" class="form-control" placeholder="Nama Parameter" id="nama" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Bobot Bobot (Format: 1.0, 2.1, dll)</label>
+                                <input type="text" name="bobot" class="form-control" placeholder="Bobot" id="bobot" pattern="[0-9]+.+[0-9]" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Tipe Parameter</label>
+                                <select id="tipeParameter" class="form-control" name="tipe" onchange="changeTipe()" required>
+                                    <option selected value="">-- Tipe --</option>
+                                    <option value="1" th:selected="'1' == ${parameter.tipe}">aspek</option>
+                                    <option value="2" th:selected="'2' == ${parameter.tipe}">indikator</option>
+                                    <option value="3" th:selected="'3' == ${parameter.tipe}">perspektif</option>
+                                    <option value="4" th:selected="'4' == ${parameter.tipe}">subperspektif</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="aspek">
+                                <label class="text-orange font-weight-bold">Masuk Ke Parameter</label>
+                                <select class="form-control" name="aspek">
+                                    <option selected value="">-- Parameter --</option>
+                                    <option th:each="aspek : ${listAspek}"
+                                            th:text="${aspek.aspek}"
+                                            th:value="${aspek.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="indikator">
+                                <label class="text-orange font-weight-bold">Masuk Ke Parameter</label>
+                                <select class="form-control" name="indikator">
+                                    <option selected value="">-- Parameter --</option>
+                                    <option th:each="indikator : ${listIndikator}"
+                                            th:text="${indikator.indikator}"
+                                            th:value="${indikator.id}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="perspektif">
+                                <label class="text-orange font-weight-bold">Masuk Ke Parameter</label>
+                                <select class="form-control" name="perspektif">
+                                    <option selected value="">-- Parameter --</option>
+                                    <option th:each="perspektif : ${listPerspektif}"
+                                            th:text="${perspektif.perspektif}"
+                                            th:value="${perspektif.id}">
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="container-fluid text-center mt-3">
+                                <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                                <button type="submit" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                                <a th:href="@{/parameter/ubah}" role="button" class="btn secondary-button btn-outline-blue">Kembali</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Parameter berhasil ditambahkan</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/parameter/ubah}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script type="text/javascript">
+    var parameter;
+    document.getElementById("aspek").style.display = "none";
+    document.getElementById("indikator").style.display = "none";
+    document.getElementById("perspektif").style.display = "none";
+    function changeTipe(){
+        parameter = document.getElementById("tipeParameter").value;
+        if(parameter == 1){
+            document.getElementById("aspek").style.display = "none";
+            document.getElementById("indikator").style.display = "none";
+            document.getElementById("perspektif").style.display = "none";
+        }
+        else if(parameter == 2){
+            document.getElementById("aspek").style.display = "block";
+            document.getElementById("indikator").style.display = "none";
+            document.getElementById("perspektif").style.display = "none";
+        }
+        else if(parameter == 3){
+            document.getElementById("indikator").style.display = "block";
+            document.getElementById("aspek").style.display = "none";
+            document.getElementById("perspektif").style.display = "none";
+        }
+        else if(parameter == 4){
+            document.getElementById("perspektif").style.display = "block";
+            document.getElementById("aspek").style.display = "none";
+            document.getElementById("indikator").style.display = "none";
+        }
+    }
+
+    $("#btnSubmit").click(function (event) {
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        // Get form
+        var form = $('#addUserForm')[0];
+
+        // Create an FormData object
+        var data = new FormData(form);
+
+        // disabled the submit button
+        $("#btnSubmit").prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/parameter/tambah",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function (data) {
+                $("#output-error").text("");
+                $("#btnSubmit").prop("disabled", false);
+                $("#successModal").modal("show")
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+                $("#btnSubmit").prop("disabled", false);
+            }
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

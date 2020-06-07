@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+    <!-- Sidebar 01  -->
+    <div  class="bg-white border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <img src="https://www.ilcs.co.id/assets/main/images/logo-head-new.png" alt="" style="width: 100px" class="center-block">
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action" id="list-navbar">Dashboard</a>
+            <a href="#" class="list-group-item list-group-item-action" id="list-navbar">Shortcuts</a>
+            <a href="#" class="list-group-item list-group-item-action" id="list-navbar">Overview</a>
+            <a href="#" class="list-group-item list-group-item-action" id="list-navbar">Events</a>
+            <a href="#" class="list-group-item list-group-item-action" id="list-navbar">Profile</a>
+        </div>
+    </div>
+    <!-- /Sidebar 01-->
+
+    <!--Sidebar 2-->
+
+    <div class="wrapper d-flex align-items-stretch fixed"  id="sidebar-wrapper" th:fragment="sidebar">
+        <nav id="sidebar" class="fixed">
+
+            <div class="custom-menu">
+
+            </div>
+
+            <div class="img bg-wrap text-center py-4">
+                <div class="user-logo">
+                    <img src="https://www.ilcs.co.id/assets/main/images/logo-head-new.png" alt="" style="width: 100px" class="center-block">
+                </div>
+            </div>
+            <ul class="list-unstyled components mb-5">
+                <li class="dashboard">
+                    <a href="/dashboard" class="menu"><span class="mr-3"><i class='fas fa-chart-bar dashboard'></i></span> Dashboard</a>
+                </li>
+                <!-- Sidebar Collapse Menu -->
+            
+                <!-- END : Sidebar Collapse Menu -->
+                <li class="lembarkerja active">
+                    <a href="/lembarkerja/" class="menu">
+                        <span class="mr-3 "><i class='fas fa-tasks lembarkerja'></i></span>
+                        <span>Lembar Kerja</span>
+                    </a>
+
+                    <div class="Submenu daftarAspek" >
+
+
+                    </div>
+
+                </li>
+
+                <li class="delegasi" sec:authorize="hasAnyAuthority('Admin')">
+                    <a th:href="@{/delegasi}" class="menu"><span class="mr-3"><i class="delegasi-icon material-icons-outlined">assignment_ind</i></span>Delegasi Perspektif</a>
+                </li>
+                <li class="periode" sec:authorize="hasAnyAuthority('Admin')">
+                    <a th:href="@{/periode}" class="menu"><span class="mr-3"><i class="far fa-calendar"></i></span> Periode</a>
+                </li>
+                <li class="dokumen" sec:authorize="hasAnyAuthority('Admin', 'Staf Corsec')">
+                    <a th:href="@{/arsip}" class="menu"><span class="mr-3"><i class="far fa-file-alt"></i></span> Dokumen</a>
+                </li>
+                <li class="akun" sec:authorize="hasAnyAuthority('Admin')">
+                    <a th:href="@{/user}" class="menu"><span class="mr-3"><i class="fas fa-user"></i></span> Akun</a>
+                </li>
+            </ul>
+        </nav>
+
+        
+    </div>
+    <!--Sidebar 2-->
+
+</html>

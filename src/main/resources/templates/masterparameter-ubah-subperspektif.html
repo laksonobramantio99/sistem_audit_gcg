@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Ubah Subperspektif</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-6">
+                    <button class="btn primary-button btn-blue" style="color: white" id="btnTambah">
+                        + Tambah Parameter
+                    </button>
+                    <div class="container p-3" style="background-color: white; border-radius: 5px;">
+                        <h3 class="text-blue font-weight-bold mb-3">Form Ubah Subperspektif</h3>
+                        <form id="addUserForm">
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Nama Subperspektif</label>
+                                <input type="text" name="subperspektif" class="form-control" placeholder="subperspektif" id="subperspektif" th:value="${subperspektif.subperspektif}" required>
+                            </div>
+                            <div class="form-group" th:if="${!listSubFaktor.empty}">
+                                <label class="text-orange font-weight-bold">Nama SubFaktor Uji</label>
+                                <div th:each="subFaktorUji, subFaktorUjiIteration : *{listSubFaktor}">
+                                    <tr>
+                                        <td scope="col">
+                                            <div class="input-group">
+                                                <input type="text" name="subfaktorUji" class="subfaktor form-control"
+                                                       placeholder="subfaktorUji" id="subfaktorUji"
+                                                       th:value="${subFaktorUji.subfaktorUji}">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="delete btn btn-danger" th:value="${subFaktorUji.id}"
+                                                            data-toggle="tooltip" data-placement="top" title="Hapus Parameter">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </div>
+                            </div>
+
+                            <div class="container-fluid text-center mt-3">
+                                <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                                <button type="button" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                                <a role="button" class="btn secondary-button btn-outline-blue" th:href="@{/parameter/ubah}">Kembali</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- The Modal -->
+            <div class="modal fade" id="notifModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange" id="textModal"></h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" id="btnBack">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal -->
+            <div class="modal fade" id="deleteModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5 px-4">
+                            <i class="fa fa-exclamation-triangle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h5 class="text-orange">Apakah Anda yakin akan menghapus parameter ini?</h5>
+                            <br>
+                            <button type="button" class="btn primary-button btn-orange" id="btnDelete" style="width: 100px">Iya</button>
+                            <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal" style="width: 100px">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal -->
+            <div class="modal fade" id="editModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <h4 id="textUbahModal" class="text-orange"></h4>
+                            <form id="editNama">
+                                <label class="text-orange font-weight-bold">Nama SubFaktor Uji</label>
+                                <input type="text" id="nama" class="form-control" name="nama" placeholder="nama">
+                            </form>
+                            <br>
+                            <button type="button" class="btn primary-button btn-orange" id="btnEdit" style="width: 100px">Submit</button>
+                            <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal" style="width: 100px">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script type="text/javascript">
+    var idSubFaktor = 0;
+    var url = window.location.href;
+    var idParameter = url.split("/")[6];
+    $('#btnTambah').click(function(event) {
+        $("#editModal").modal("show");
+    });
+
+    $(".delete").click(function () {
+        $("#deleteModal").modal("show");
+        idSubFaktor = $(this).attr('value');
+    });
+
+    $('#btnBack').click(function () {
+        window.location.href = "/parameter/ubah";
+    });
+
+    $('#btnSubmit').click(function (event) {
+        var subperspektif = $("#subperspektif").val();
+        var listSubFaktor = $(".subfaktor");
+        var formData = new FormData();
+        formData.append("subperspektif", subperspektif);
+        for(let i = 0; i < listSubFaktor.length; i++){
+            var string = "subfaktor"+i;
+            formData.append(string, $(listSubFaktor[i]).val());
+        }
+        event.preventDefault();
+        $(this).prop('disabled', true);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/parameter/ubah/subperspektif/" + idParameter,
+            async: false,
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(formData){
+                $("#textModal").text("Parameter berhasil diubah");
+                $("#notifModal").modal("show");
+                $("#btnSubmit").prop("disabled", false);
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+                $("#btnSubmit").prop("disabled", false);
+            }
+        });
+    });
+
+    $('#btnDelete').click(function (event) {
+        event.preventDefault();
+        $(this).prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/parameter/hapus/" + idSubFaktor,
+            async: false,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(data){
+                window.location.href = url;
+                $("#btnSubmit").prop("disabled", false);
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+                $("#btnSubmit").prop("disabled", false);
+            }
+        });
+    });
+
+    $('#btnEdit').click(function (event) {
+        event.preventDefault();
+        var form = $("#editNama")[0];
+        var data = new FormData(form);
+        $(this).prop("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/parameter/tambah/subfaktor/" + idParameter,
+            async: false,
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(data){
+                window.location.href = url;
+                $("#btnSubmit").prop("disabled", false);
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+                $("#btnSubmit").prop("disabled", false);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

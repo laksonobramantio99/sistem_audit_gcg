@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <!-- End of CSS -->
+
+    <!-- Datatables   -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.css"/>
+
+    <!-- TITLE PAGE -->
+    <title>Pengelolaan Role</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-2">
+            <!-- ISI KONTEN -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="/user">Akun</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/divisi">Divisi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active">Role</a>
+                </li>
+            </ul>
+            <div class="container-fluid py-2" style="background-color: white;">
+
+                <h2 class="text-blue font-weight-bold mb-3 ">Pengelolaan Role</h2>
+                <a th:href="@{/role/tambah}">
+                    <button type="button" class="btn btn-orange font-weight-bold mb-3">+ Tambah Role</button>
+                </a>
+                <div class="table-responsive py-3" style="background-color: #ffffff; border-radius: 5px">
+                    <table id="myTable" class="table table-hover">
+                        <thead>
+                        <tr class="text-blue text-center">
+                            <th class="text-left">No.</th>
+                            <th>Nama Role</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="role, iterStat : ${roleList}">
+                            <td th:text="${iterStat.count}" class="text-left"></td>
+                            <td th:text="${role.nama}"></td>
+                            <td class="text-center">
+<!--                                <button role="button" class="hapusDivisi btn btn-orange mr-2"-->
+<!--                                        th:value="${role.id}" data-toggle="tooltip" title="Lihat role">-->
+<!--                                    <i class="fas fa-info-circle"></i>-->
+<!--                                </button>-->
+                                <a role="button" class="btn btn-blue primary-button mr-2" th:href="@{'/role/ubah/' + ${role.id}}"
+                                   data-toggle="tooltip" title="Edit role">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/datatables.min.js"></script>
+<!-- End of scripts / JS-->
+<script>
+    // Datatables
+    $(document).ready( function () {
+        var idUserSelected = 0;
+
+        $('#myTable').DataTable();
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#myTable tbody').on('click', '.hapusDivisi', function (event) {
+            idUserSelected = $(this).attr('value');
+            $.ajax({
+                type: "GET",
+                url: "/api/divisi/hasUser/" + idUserSelected,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    if (data.hasUser) {
+                        $("#cantDeleteModal").modal("show");
+                    }
+                    else {
+                        $("#deleteModal").modal("show");
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        });
+
+        // POST Deactivate
+        $("#btnDelete").click(function (event) {
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+            $(this).prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/divisi/hapus/" + idUserSelected,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#deleteModal").modal("hide");
+                    $("#successDeleteModal").modal("show");
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

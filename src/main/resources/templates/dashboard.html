@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <link th:href="@{/css/circle.css}" rel="stylesheet">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <!-- End of CSS -->
+    
+    <!-- TITLE PAGE -->
+    <title>Dashboard</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid mt-3 ">
+            <!-- ISI KONTEN -->
+
+<!--PERIODE BERJALAN - SECTION 1-->
+            <div class="mt-2 container"  style="padding-left: 0 !important;">
+                <h2 class="text-blue font-weight-bold " style="font-size: x-large; margin-bottom: 0 !important;padding-left: 0 !important;">Dashboard</h2>
+                <h2 class="font-weight-bold orange-subtitle " style="font-size: medium; margin-bottom: 0 !important;padding-left: 0 !important;">Status pengerjaan pada periode penilaian berjalan</h2>
+            </div>
+
+            <div class="mt-2 mb-2 block container-fluid horizontal-scrollable">
+                    <div class="row overflow flex-row flex-nowrap">
+                        <th:block  th:if="${periodeBerjalan}!=null">
+                            <div class="card block m-2 col-4 bg-white" style="margin-left: 0 !important;">
+                                <div class="card-body" style="padding-left: 0.5em;">
+                                    <h3 class="card-title" style="font-size: medium; font-weight: bold;" th:text="${periodeBerjalan.tahun}"></h3>
+                                    <div class="row flex-row flex-nowrap" >
+                                        <div class="col"></div>
+
+                                        <div class="col">
+                                            <h5 class="Subtitle-orange text-center" style="font-size: small;">Tertimbang</h5>
+                                            <div th:class="'ml-2 c100 orange big p' + ${#numbers.formatInteger(periodeBerjalan.capaian,1)}">
+                                                <span class="Subtitle-orange" th:text="${#numbers.formatDecimal(periodeBerjalan.capaian,1,2)} "></span>
+                                                <div class="slice">
+                                                    <div class="bar"></div>
+                                                    <div class="fill"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col">
+                                            <div><h5 class="text-black-grey text-center" style="font-size: small;">Status penyelesaian ( <span class="Subtitle-blue" th:text="${totalSubperspektifDiselesaikan} + ' / ' + ${totalSubperspektifPeriode}"></span> Subperspektif )</h5></div>
+                                            <div class="progress statusPeriode ">
+                                                <div class="progress-bar statusPeriode-bar" role="progressbar"  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                                     th:style="'width:'+ ${#numbers.formatInteger(persentaseKelengkapanDokumen,1)} +'%'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                            </div>
+        
+                            <th:block  th:each="aspek, aspekIterationStatus :*{listAspekPeriodeBerjalan}" >
+                                <div th:if="${aspekIterationStatus.odd}" class="col-3" style="padding-left: 0;">
+                                    <div class="card block m-2 container block row bg-white" >
+                                        <div class="card-body" style="padding-left: 0.6em;">
+                                            <h3 class="card-title" style="font-size: medium; font-weight: bold;" th:text="'Aspek ' + ${aspek.noUrut}"></h3>
+                                            <div class="row flex-row flex-nowrap">
+                                                <div class="col">
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray;">Pemenuhan Dokumen</h5>
+                                                    <div  th:class="'c100 blue small p' + ${#numbers.formatInteger(aspek.nilai*100,1)}">
+                                                        <span class="Subtitle-blue" th:text="${#numbers.formatDecimal(aspek.tertimbang,1,2)}"></span>
+                                                        <div class="slice">
+                                                            <div class="bar"></div>
+                                                            <div class="fill"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col detailAspek">
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray; margin-bottom: 1px; ">Bobot</h5>
+                                                    <h4 class="Subtitle-orange" style="font-size: medium; font-weight: bold;" th:text="${#numbers.formatDecimal(aspek.bobot,1,2)}"></h4>
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray; margin-bottom: 1px;">Capaian</h5>
+                                                    <h4 class="Subtitle-orange" style="font-size: medium; font-weight: bold;" th:text="${#numbers.formatDecimal(aspek.nilai*100,1,2)} +'%'"></h4>
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray;">AOI</h5>
+                                                    <a th:href="@{'/lembarkerja/'+ ${periodeBerjalan.tahun} +'/AOI/' + ${aspek.noUrut}}" class="btn btn-orange btn-small text-center" style="font-size: xx-small; padding: 6px;" role="button" data-toggle="tooltip" data-placement="bottom" title="Lihat AOI"><i class="fas fa-search"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <div><h5 class="text-black-grey text-center" style="font-size: xx-small;">Status penyelesaian ( <span class="Subtitle-blue" th:text="${listJumlahSubperspektifDiselesaikanPerAspek[aspekIterationStatus.index]} + ' / ' + ${listJumlahSubperspektifPerAspek[aspekIterationStatus.index]}"></span> Subperspektif )</h5></div>
+                                                    <div class="progress aspekStatusPengerjaan ">
+                                                        <div class="progress-bar statusPeriode-bar" role="progressbar"  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                                             th:style="'width:'+ ${#numbers.formatInteger(listPersentasePenyelesaianAspek[aspekIterationStatus.index]*100,1)} +'%'">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card block m-2 container block row bg-white" th:if="${aspekIterationStatus.index+1} < ${#lists.size(listAspekPeriodeBerjalan)}" >
+                                        <div class="card-body "  style="padding-left: 0.6em;">
+                                            <h3 class="card-title" style="font-size: medium; font-weight: bold;" th:text="'Aspek ' + ${listAspekPeriodeBerjalan[aspekIterationStatus.index+1].noUrut}"></h3>
+                                            <div class="row flex-nowrap">
+                                                <div class="col">
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray;">Pemenuhan Dokumen</h5>
+                                                    <div class="" th:class="'c100 blue small p' + ${#numbers.formatInteger(listAspekPeriodeBerjalan[aspekIterationStatus.index+1].nilai*100,1)} ">
+                                                        <span class="Subtitle-blue" th:text="${#numbers.formatDecimal(listAspekPeriodeBerjalan[aspekIterationStatus.index+1].tertimbang,1,2)}"></span>
+                                                        <div class="slice">
+                                                            <div class="bar"></div>
+                                                            <div class="fill"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col detailAspek">
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray; margin-bottom: 1px; ">Bobot</h5>
+                                                    <h4 class="Subtitle-orange" style="font-size: medium; font-weight: bold;" th:text="${#numbers.formatDecimal(listAspekPeriodeBerjalan[aspekIterationStatus.index+1].bobot,1,2)}"></h4>
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray; margin-bottom: 1px;">Capaian</h5>
+                                                    <h4 class="Subtitle-orange" style="font-size: medium; font-weight: bold;" th:text="${#numbers.formatDecimal(listAspekPeriodeBerjalan[aspekIterationStatus.index+1].nilai*100,1,2)} +'%'"></h4>
+                                                    <h5  style="font-size: x-small; font-weight: bold; color: gray;">AOI</h5>
+                                                    <a th:href="@{'/lembarkerja/'+ ${periodeBerjalan.tahun} +'/AOI/' + ${listAspekPeriodeBerjalan[aspekIterationStatus.index+1].noUrut}}" class="btn btn-orange btn-small text-center" style="font-size: xx-small; padding: 6px;" role="button" data-toggle="tooltip" data-placement="bottom" title="Lihat AOI"><i class="fas fa-search"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <div><h5 class="text-black-grey text-center" style="font-size: xx-small;">Status penyelesaian ( <span class="Subtitle-blue" th:text="${listJumlahSubperspektifDiselesaikanPerAspek[aspekIterationStatus.index+1]} + ' / ' + ${listJumlahSubperspektifPerAspek[aspekIterationStatus.index+1]}"></span> Subperspektif )</h5></div>
+                                                    <div class="progress aspekStatusPengerjaan ">
+                                                        <div class="progress-bar statusPeriode-bar" role="progressbar"  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                                             th:style="'width:'+ ${#numbers.formatInteger(listPersentasePenyelesaianAspek[aspekIterationStatus.index+1]*100,1)} +'%'">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                        <th:block th:if="${periodeBerjalan}==null">
+                    <div class="container mt-5 mb-5">
+                        <p class="text-black-grey text-center ">Tidak terdapat periode yang sedang berjalan. Apabila terdapat kesalahan, silahkan hubungi admin.</p>
+                    </div>
+                </th:block>
+                        
+                    </div>
+                
+            </div>
+<!--PERIODE BERJALAN - END SECTION 1-->
+
+
+<!--GRAFIK PERIODE PERKEMBANGAN - SECTION 2-->
+            <div class="row mt-4 container" style="align-items: center;">
+                <div class="col-5  pl-0 pr-0 "  style="padding-left: 0 !important;">
+                    <h2 class="font-weight-bold orange-subtitle " style="font-size: medium; margin-top: 0 !important;padding-left: 0 !important;">Grafik perkembangan hasil penilaian tahunan</h2>
+                </div>
+
+                <th:block th:if="${#lists.size(listPeriodeAktif) > 1}">
+                    <div class="col-1" style="text-align: end; align-self: center;">
+                        <i class="far fa-calendar-alt Subtitle-blue" ></i>
+                    </div>
+                    <div class="col pl-0 pr-0 my-auto align-self-end">
+                        <div class="input-group">
+                            <select class="custom-select" id="periodeAwalSelector" style="font-size: xx-small;">
+                                <th:block th:each="periode, periodeIterationStatus : *{listPeriodeAktif}" th:if="${!listPeriodeBerakhir.empty}">
+                                    <option class="periodeAwalSelector-option" th:value="${periode.tahun}" th:text="'Periode awal : ' + ${periode.tahun}"></option>
+                                </th:block>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="col-1 pl-0 pr-0" style="align-self: center;">
+                        <h2 style="font-size: small; text-align: center; margin-bottom: 0 !important;" class="Subtitle-blue">hingga</h2>
+                    </div>
+                    <div class="col pl-0 pr-0 my-auto align-self-end">
+                        <div class="input-group">
+                            <select class="custom-select" id="periodeAkhirSelector" style="font-size: xx-small;">
+                                <th:block th:each="periode, periodeIterationStatus : *{listPeriodeAktif}" th:if="${!listPeriodeBerakhir.empty}">
+                                    <option class="periodeAkhirSelector-option" th:value="${periode.tahun}" th:text="'Periode akhir : ' + ${periode.tahun}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-1 pl-0 pr-0">
+                        <button type="button" class="btn btn-link btn-view-periode" data-toggle="tooltip" data-placement="bottom" title="Tampilkan grafik"><i class="fas fa-search"></i></button></button>
+                    </div>
+                </th:block>
+
+            </div>
+            
+           
+            <div class="mt-2 mb-2 block container-fluid row flex-row flex-nowrap" >
+                <div class="container mt-5 mb-5" th:if=${listPeriodeAktif.empty}>
+                    <p class="text-black-grey text-center ">Tidak terdapat periode yang aktif. Apabila terdapat kesalahan, silahkan hubungi admin.</p>
+                </div>
+                <th:block th:if=${!listPeriodeAktif.empty}>
+                    <div class="card m-2 col-6 bg-white" style="margin-left: 0 !important;">
+                        <canvas class="card-body row" id="myChart"></canvas>
+                    </div>
+                    <div class="card m-2 col-6 bg-white" style="margin-left: 0 !important;">
+                        <canvas class="card-body row" id="CapaianTahunanBar"></canvas>
+                    </div>
+                </th:block>
+            </div>
+<!--GRAFIK PERIODE PERKEMBANGAN - END SECTION 2-->
+
+            <div class="mt-2 container"  style="padding-left: 0 !important;">
+                <h2 class="font-weight-bold col-9 orange-subtitle " style="font-size: medium; margin-bottom: 0 !important;padding-left: 0 !important;">Hasil penilaian periode sebelumnya</h2>
+            </div>
+
+            <div class="mt-2 mb-2 block container-fluid horizontal-scrollable">
+                <div class="mt-2 mb-2 row overflow flex-row flex-nowrap">
+                    <div class="container m-5" th:if="${listPeriodeBerakhir.empty}">
+                        <p class="text-black-grey text-center ">Tidak terdapat periode yang telah berakhir. Apabila terdapat kesalahan, silahkan hubungi admin.</p>
+                    </div>
+                    <th:block th:each="periode, periodeIterationStatus : *{listPeriodeBerakhir}" th:if="${!listPeriodeBerakhir.empty}">
+                        <div class="card m-2 col-6 bg-white" style="margin-left: 0 !important;">    
+                            <div class="card-body">
+                                <div class="row flex-nowrap">
+                                    <div class="col-3"><h5 class="Subtitle-orange" style="font-size: medium" th:text="${periode.tahun}"></h5></div>
+                                    <div class="col-6"><h5 class="text-black-grey" style="font-size: small; white-space: normal !important;" >Capaian Penilaian Good Corporate Governance </h5></div>
+                                    <div class="col" style="text-align: end;"><span><button style='font-size: small; font-weight: bold; '  class='btn font-weight-bold btn-orange p-1 ml-3' th:text="${#numbers.formatDecimal(periode.capaian,1,2)} +'%'" disabled></button></button></div>
+                                </div>
+                                <div class="row">
+                                    <table class="table" style="font-size: small;">
+                                        <thead>
+                                        <tr class="Subtitle-orange">
+                                            <th scope="col" style="width: 15%;">Aspek</th>
+                                            <th scope="col" style="width: 15%;">Bobot</th>
+                                            <th scope="col" style="width: 15%;">Tertimbang</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <th:block th:each="aspek, aspekIterationStatus : *{listAspekByPeriode[periodeIterationStatus.index]}">
+                                            <tr>
+                                                <th  style="width: 15%;"scope="row" th:text="'Aspek ' + ${aspek.noUrut}"></th>
+                                                <td  style="width: 15%;"th:text="${aspek.bobot}"></td>
+                                                <td  style="width: 15%;"th:text="${aspek.tertimbang}!=null ? ${#numbers.formatDecimal(aspek.tertimbang,1,2)} : '0.0'"></td>
+                                                <td >
+                                                    <div class="row">
+                                                        <div class="col" style="padding: 0 !important;">
+                                                            <div class="rectangle my-auto" th:style="'width:'+ @{${aspek.nilai}!=null ? ${#numbers.formatInteger(aspek.nilai*100,1) +'%' } : '0%'}" th:attr="size = ${aspek.nilai}!=null ? ${#numbers.formatInteger(aspek.nilai*100,1) } : '0'"></div>
+                                                        </div>
+                                                        <h5 class="nilai pl-2 pt-1 col-2" th:text="${aspek.nilai}!=null ? ${#numbers.formatDecimal(aspek.nilai*100,1,1) + '%'} : '0%'"></h5>
+                                                    </div>
+                                                    
+                                                </td>
+                                            </tr>
+                                        </th:block>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade"  id="alertModal" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal body -->
+                    <div class="modal-body text-center py-5">
+                        <h4 class="text-orange">Terdapat kesalahan dalam pemilihan rentang periode</h4>
+                        <br>
+                        <a type="button"  class="btn btn-outline-orange text-orange" style="color: #F16522 !important; font-weight: bold;" data-dismiss="modal">Kembali</a>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+    <object th:include="fragments/fragment :: js" th:remove="tag"></object>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+    <script src="/js/dashboard.js"></script>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

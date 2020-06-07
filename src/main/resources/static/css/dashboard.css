@@ -1,0 +1,37 @@
+.horizontal-scrollable > .row { 
+    overflow-x: auto; 
+    white-space: nowrap; 
+} 
+  
+.horizontal-scrollable > .row > .col-4 {
+    display: inline-block; 
+    float: none; 
+} 
+
+.rectangle {
+    background-color: #0072BB;
+    height: 24px;
+    
+}
+
+
+.nilai {
+    color: black;
+    font-weight: bold;
+    font-size: xx-small;
+}
+
+.statusPeriode{
+    height: 30px;
+}
+
+.statusPeriode-bar{
+    height: 30px;
+    background-color:#0072BB;
+}
+
+.aspekStatusPengerjaan{
+    height: 15px;
+    color: #0072BB;
+}
+

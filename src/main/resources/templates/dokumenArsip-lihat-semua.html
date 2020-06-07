@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Dokumen Arsip GCG</title>
+
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <div class="row" style="padding: 1%">
+                <div class="col-9"><h2 class="text-blue font-weight-bold mb-3 ">Daftar Dokumen Arsip GCG</h2></div>
+                <div class="col-3" style="padding-left: 7.5%">
+                    <a th:href="@{/arsip/tambah}">
+                        <button type="button" class="btn primary-button btn-blue">+ Tambah Dokumen</button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row mt-2 container-fluid">
+                <table id="tabelDokumenArsip" class="table" style="background-color: white" cellspacing="0" width="100%">
+                    <thead>
+                    <tr class="text-blue text-center">
+                        <th>No.</th>
+                        <th>Tahun</th>
+                        <th>Dokumen</th>
+                        <th>Author</th>
+                        <th>Waktu Penambahan</th>
+                        <th>Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <div th:each="daftarDokumenArsip, iterationStatus : *{listDokumenArsip}">
+                        <div th:each="dokumenArsip, arsipIterationStatus : *{daftarDokumenArsip}">
+                            <tr style="border: 1px solid #ddd;">
+                                <td th:text="${iterationStatus.count}" align="center" th:if="${arsipIterationStatus.index == 0}"></td>
+                                <td th:unless="${arsipIterationStatus.index == 0}"></td>
+                                <td th:text="${dokumenArsip.tahun}" align="center" th:if="${arsipIterationStatus.index == 0}"></td>
+                                <td th:unless="${arsipIterationStatus.index == 0}"></td>
+                                <td th:text="${dokumenArsip.nama}"></td>
+                                <td th:text="${dokumenArsip.ownerDokumenArsip.nama}" align="center"></td>
+                                <td th:text="${#temporals.format(dokumenArsip.uploadDate, 'dd-MM-yyyy HH:mm')}" align="center"></td>
+                                <td align="center">
+                                    <a role="button" class="btn btn-orange primary-button" data-toggle="tooltip" data-placement="top" title="Download File" th:href="@{/} + downloadArsip + '/' + ${dokumenArsip.id}">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <a role="button" class="delete btn primary-button btn-blue" style="color: white" data-toggle="tooltip" data-placement="top" title="Hapus File" th:value="${dokumenArsip.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </div>
+                    </div>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- The Modal: Delete -->
+            <div class="modal fade" id="deleteModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5 px-4">
+                            <i class="fa fa-exclamation-triangle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h5 class="text-orange">Apakah Anda yakin akan menghapus dokumen arsip ini?</h5>
+                            <br>
+                            <button type="button" class="btn primary-button btn-orange" id="btnDelete" style="width: 100px">Iya</button>
+                            <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal" style="width: 100px">Kembali</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- The Modal: DeleteSuccess -->
+            <div class="modal fade" id="deleteSuccess" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5 px-4">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h5 class="text-orange">Dokumen arsip berhasil dihapus</h5>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/arsip}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<script>
+    $(document).ready( function () {
+        var idDokumenArsipSelected = 0;
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#tabelDokumenArsip tbody').on('click', '.delete', function (event) {
+            $("#deleteModal").modal("show");
+            idDokumenArsipSelected = $(this).attr('value');
+        });
+
+        // POST Delete
+        $("#btnDelete").click(function (event) {
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+            $(this).prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                url: "/arsip/hapus-arsip/" + idDokumenArsipSelected,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#btnSubmit").prop("disabled", false);
+                    $("#deleteModal").modal("hide");
+                    $("#deleteSuccess").modal("show")
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

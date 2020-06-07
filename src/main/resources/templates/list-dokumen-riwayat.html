@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Riwayat Dokumen</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <div class="m-5 pb-4 bg-transparent">
+                <h3 style="color: #005cbf">Riwayat Submisi</h3>
+                <h5 style="color: #005cbf" class="card-text" th:text="${subperspektif.subperspektif}"></h5>
+            </div>
+<!--            <div class="m-5 pb-5 bg-white">-->
+                <div class="shadow-sm p-3 mb-5 bg-white rounded">
+
+                    <!--        <div class="jumbotron" style="background-color: white">-->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="color: #005cbf; text-align: left">No</th>
+                            <th scope="col" style="color: #005cbf ; text-align: left">Nama Dokumen</th>
+                            <th scope="col" style="color: #005cbf ; text-align: left">Author</th>
+                            <th scope="col" style="color: #005cbf; text-align: left">Waktu Pengumpulan</th>
+                            <th scope="col" style="color: #005cbf; text-align: left">Aksi</th>
+                            <th scope="col" style="color: #005cbf; text-align: left">AOI</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="submisi, iterationStatus : ${subs}">
+                            <td scope="row" th:text="${iterationStatus.count}" style="text-align: left"></td>
+                            <td th:text="${submisi.dokumenList[0].fileName}" style="text-align: left"></td>
+                            <td th:text="${submisi.uploaderSubmisi.nama}" style="text-align: left"></td>
+                            <td th:text="${#temporals.format(submisi.uploadDate, 'dd-MM-yyyy, HH:mm')}" style="text-align: left"></td>
+                            <td style="text-align: left"><div class="mt-2 mb-2">
+                                <a th:href="@{/} + downloadFile + '/' + ${submisi.dokumenList[0].id}" style="font-size: 12px;" class="btn btn-xs btn-blue" href="#" role="button"><i class="fas fa-download"></i></a>
+                            </div>
+                            </td>
+                            <td style="alignment: center">
+                                <button th:id="${submisi.id}" type="button" class="btn btn-link btn-detail" >Detail</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <a th:href="@{/submisi/} + ${tahun} + '/lihat/' + ${idSubperspektif}" role="button" class="ml-2 btn secondary-button btn-outline-blue">  Kembali</a>
+                    <!--        </div>-->
+                </div>
+<!--            </div>-->
+
+
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <h4 class="Subtitle-blue" >Aspect Of Improvement</h4>
+                            <p class="text-orange" style="font-weight: bold;text-align: left">Kelebihan: </p>
+                            <p id="kelebihan" style="text-align: left"></p>
+
+                            <p class="text-orange" style="font-weight: bold;text-align: left">Kekurangan :</p>
+                            <p id="kekurangan" style="text-align: left"></p>
+
+                            <p class="text-orange" style="font-weight: bold;text-align: left">Rekomendasi :</p>
+                            <p id="rekomendasi" style="text-align: left"></p>
+
+                            <p class="text-orange" style="font-weight: bold;text-align: left">Hambatan :</p>
+                            <p id="hambatan" style="text-align: left"></p>
+
+                            <p class="text-orange" style="font-weight: bold;text-align: left">Referensi :</p>
+                            <p id="referensi" style="text-align: left"></p>
+
+
+<!--                            <p id="kekurangan" th:utext="'Kekurangan : ' + ${kekurangan}"></p>-->
+<!--                            <p th:utext="'Hambatan : ' + ${hambatan}"></p>-->
+<!--                            <p th:utext="'Rekomendasi : ' + ${rekomendasi}"></p>-->
+<!--                            <p th:utext="'Referensi : ' + ${referensi}"></p>-->
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button text-orange" data-dismiss="modal">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<script>
+    $(document).ready(function () {
+
+        $(".btn-detail").click(function (event) {
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // Create dummy
+
+            var idSubmisi = $(this).attr('id');
+            console.log(idSubmisi);
+
+            $.ajax({
+                type: "GET",
+                // enctype: 'multipart/form-data',
+                url: "/api/submisi/getAoi/" + idSubmisi,
+                async: false,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    //idSubmisi = data.idSubmisi;
+                    $("#kelebihan").html(data.kelebihan);
+                    $("#kekurangan").html(data.kekurangan);
+                    $("#hambatan").html(data.hambatan);
+                    $("#rekomendasi").html(data.rekomendasi);
+                    $("#referensi").html(data.referensi);
+
+                    console.log(data.kelebihan);
+                    $("#successModal").modal("show")
+                    // $("#output-error").text("");
+                    // $("#btnSubmit").prop("disabled", false);
+
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+
+        });
+    });
+</script>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

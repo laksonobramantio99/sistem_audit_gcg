@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <link th:href="@{/css/style-login.css}" rel="stylesheet">
+    <!-- End of CSS -->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <title>Login</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-7 vh-100 d-flex" id="login-more">
+            <div class="container px-5 justify-content-center align-self-center" >
+                <h5 class="font-weight-bold text-black-grey">PT Integrasi Logistik Cipta Solusi</h5>
+                <h1 class="font-weight-bold text-blue">Applaudit</h1>
+                <h5 class="font-weight-bold text-orange">Sistem Audit Good Corporate Governance</h5>
+                <img th:src="@{/img/login-img.png}" class="img-fluid">
+                <br><br>
+            </div>
+        </div>
+        <div class="col-md-5 vh-100 m-auto d-flex" style="background-color: #ffffff">
+            <div class="container text-center justify-content-center align-self-center">
+                <h1 class="font-weight-bold text-blue mb-5">LOGIN</h1>
+                <i class="fas fa-user-circle fa-8x text-blue text-center"></i>
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group text-left text-blue px-4">
+                        <label class="font-weight-bold">Username</label>
+                        <input type="text" class="form-control" placeholder="Username" name="username">
+                    </div>
+                    <div class="form-group text-left text-blue px-4">
+                        <label class="font-weight-bold">Password</label>
+                        <input type="password" class="form-control" placeholder="Password" name="password">
+                    </div>
+                    <div th:if="${param.error}" class="mb-3">
+                        <span style="color: red">Invalid username or password</span>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <div class="g-recaptcha" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
+                        <span id="captchaError" class="alert alert-danger col-sm-4" style="display:none"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-blue text-center mt-2" id="btnLogin">Login</button>
+                    <br>
+                    <button type="button" class="btn btn-link" data-toggle="modal" data-target="#forgetPasswordModal">Lupa Password</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="forgetPasswordModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal body -->
+            <div class="modal-body text-center py-5 px-4">
+                <i class="fa fa-exclamation-triangle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                <h5 class="text-orange">Untuk memperbaharui password akun, silakan menghubungi admin.</h5>
+                <br>
+                <button role="button" class="btn btn-outline-orange secondary-button" data-dismiss="modal">Kembali</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- END: The Modal -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>Form Ubah Divisi</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+
+            <div class="row">
+
+                <div class="col-sm-8">
+                    <div class="container p-3" style="background-color: white; border-radius: 5px;">
+                        <h3 class="text-blue font-weight-bold mb-3">Form Tambah Divisi</h3>
+                        <form id="addDivisiForm" action="javascript:void(0);" th:object="${divisiModel}">
+                            <input type="hidden" name="id" th:field="${divisiModel.id}">
+                            <div class="form-group">
+                                <label class="text-orange font-weight-bold">Nama Divisi</label>
+                                <input type="text" name="nama" class="form-control" placeholder="Nama Divisi"
+                                       th:value="${divisiModel.nama}" id="nama" pattern="[a-zA-Z ]+" required>
+                            </div>
+
+                            <div class="container-fluid text-center mt-3">
+                                <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                                <button type="submit" class="btn primary-button btn-blue" id="btnSubmit">Simpan</button>
+                                <a th:href="@{/divisi}" role="button" class="btn secondary-button btn-outline-blue">Kembali</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <!-- The Modal -->
+            <div class="modal fade" id="successModal" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- Modal body -->
+                        <div class="modal-body text-center py-5">
+                            <i class="fa fa-check-circle fa-3x text-orange mb-2" aria-hidden="true"></i>
+                            <h4 class="text-orange">Divisi berhasil diubah</h4>
+                            <br>
+                            <a role="button" class="btn btn-outline-orange secondary-button" th:href="@{/divisi}">Kembali</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END: The Modal -->
+
+
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+<script type="text/javascript">
+
+    function validateForm() {
+        var isValid = true;
+        $('.form-control').each(function() {
+            if ( $(this).val() === '' ) {
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+
+    function checkUsernameIsAvailable() {
+        var isAvailable = false;
+        $.ajax({
+            type: 'GET',
+            url: '/api/user/isAvailable/' + $('#username').val(),
+            async: false,
+            dataType: 'json',
+            processData: false,
+            cache: false,
+            success: function (data) {
+                isAvailable = data.isAvailable;
+            },
+            error: function (e) {
+                console.log("ERROR: ", e);
+            }
+        });
+        return isAvailable;
+    }
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function (event) {
+            if (!(validateForm())) {
+                $("#output-error").text("Harap lengkapi semua field.");
+                return;
+            }
+
+            //stop submit the form, we will post it manually.
+            event.preventDefault();
+
+            // Get form
+            var form = $('#addDivisiForm')[0];
+
+            // Create an FormData object
+            var data = new FormData(form);
+
+            // disabled the submit button
+            $("#btnSubmit").prop("disabled", true);
+
+            $.ajax({
+                type: "POST",
+                // enctype: 'multipart/form-data',
+                url: "/divisi/tambah",
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (data) {
+                    $("#output-error").text("");
+                    $("#successModal").modal("show")
+                },
+                error: function (e) {
+                    console.log("ERROR: ", e);
+                    $("#btnSubmit").prop("disabled", false);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

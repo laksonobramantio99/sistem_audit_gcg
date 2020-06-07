@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+    <!-- End of CSS -->
+
+    <!-- TITLE PAGE -->
+    <title>View Dokumen</title>
+</head>
+
+<body>
+
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+        <div class="d-flex justify-content-center">
+<!--        <div class="container-fluid my-3">-->
+            <!-- ISI KONTEN -->
+
+            <div class="card bg-light mb-3" style="max-width: 650px">
+                <div class="card-body">
+            <h5 style="color: #005cbf" class="card-text" th:text="${subperspektif.subperspektif}"></h5>
+                    <br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Status Penilaian     :</font></td>
+                        <td th:text=" ${statusPenilaian}"></td>
+                    </tr>
+                    <br><br>
+
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Waktu perubahan : </font></td>
+                        <td th:text=" ${newDate}"></td>
+                    </tr>
+                    <br><br>
+
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Nama File : </font></td>
+                        <td th:text="${file.fileName}"></td>
+                    </tr>
+                    <br><br>
+
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Komentar : </font></td>
+                        <td th:text="${submisi.komentar}"></td>
+                    </tr>
+
+                    <br><br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Kelebihan : </font></td>
+                        <td th:text="${submisi.kelebihan}"></td>
+                    </tr>
+
+                    <br><br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Kekurangan : </font></td>
+                        <td th:text="${submisi.kekurangan}"></td>
+                    </tr>
+
+                    <br><br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Rekomendasi : </font></td>
+                        <td th:text="${submisi.rekomendasi}"></td>
+                    </tr>
+
+                    <br><br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Hambatan : </font></td>
+                        <td th:text="${submisi.hambatan}"></td>
+                    </tr>
+
+                    <br><br>
+                    <tr>
+                        <td ><font color="#ff4500" style="font-weight: bold">Referensi : </font></td>
+                        <td th:text="${submisi.referensi}"></td>
+                    </tr>
+
+
+                    <br><br>
+
+                    <div class="container-fluid text-right mt-3">
+                        <a th:href="@{'/submisi/'+ ${tahun} +'/riwayat/' + ${idSubperspektif}}" style="font-weight: bold">Riwayat Submisi</a>
+                    </div>
+
+                    <div class="container-fluid text-center mt-3">
+                        <p class="font-weight-bold mb-2" id="output-error" style="color: #f70000"></p>
+                        <!--            <button type="button" class="btn primary-button btn-blue" id="btnSubmit">Edit</button>-->
+
+                        <a th:href="@{'/submisi/'+ ${tahun} +'/edit/' + ${idSubperspektif}}" style="color: white" >
+                            <button th:if="${period == false}" class="btn primary-button btn-blue">
+                                Edit
+                            </button>
+                        </a>
+
+                        <a th:href="@{'/submisi/'+ ${tahun} +'/edit/' + ${idSubperspektif}}" >
+                            <button th:if="${!(period == false)}" class="btn primary-button btn-blue" hidden>
+                                Edit
+                            </button>
+                        </a>
+
+                        <a th:href="@{'/lembarkerja/' + ${tahun} + '/1'}" role="button" class="ml-2 btn secondary-button btn-outline-blue">Kembali</a>
+                    </div>
+
+            </div>
+        </div>
+
+            <!-- END: ISI KONTEN -->
+        </div>
+
+
+
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- scripts / JS-->
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+<!-- End of scripts / JS-->
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Form Tambah Delegasi Perspektif GCG</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <div th:include="fragments/fragment :: css" th:remove="tag"></div>
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+
+    <!--Sidebar-->
+    <object th:replace="fragments/sidebar :: sidebar" th:remove="tag"></object>
+    <!--End of Sidebar-->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" >
+        <!-- Topbar -->
+        <nav th:replace="fragments/navbar :: navbar-top" th:remove="tag"></nav>
+        <!-- End of Topbar -->
+
+        <div class="container-fluid my-3">
+            <!-- ISI KONTEN -->
+            <div style="padding: 1%"><h2 class="text-blue font-weight-bold mb-3 " th:text="'Detail Delegasi Perspektif Penilaian GCG ' + ${tahun}">Detail Delegasi Perspektif Penilaian GCG</h2></div>
+                <div class="card-body">
+                    <div>
+                        <div style="padding: 1%"><h4 class="text-orange">Penanggung Jawab</h4></div>
+                        <div class="col-sm-3 col-md-6 col-lg-5">
+                            <h5 th:text="${divisi.nama}"></h5>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div>
+                        <div><h4 style="padding: 1%" class="text-orange">Daftar Perspektif</h4></div>
+                        <div class="col-sm-3 col-md-6 col-lg-5"><h6 th:if="${listDelegasi.size() == 0}">Belum terdapat delegasi perspektif</h6></div>
+                    </div>
+                    <div class="row" th:if="${listDelegasi.size() != 0}">
+                        <div class="col-2" style="padding-left: 2.5%"><label for="myInput" class="Subtitle-orange">Cari Parameter</label></div>
+                        <div class="col-4">
+                            <input class="form-control form-control-sm " id="myInput" type="text" placeholder="Masukan nama aspek atau perspektif">
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-2" style="padding-left: 1%">
+                            <a th:href="@{/delegasi/ubah(id=${divisi.id})}">
+                                <button type="button" class="btn primary-button btn-orange">Ubah Delegasi</button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row mt-2 container-fluid">
+                        <table class="table" style="background-color: white" cellspacing="0" width="100%">
+                            <div th:each="aspek, iterationStatus : ${listAspek}">
+                                <thead class="card-link" >
+                                <tr class="thead bg-blue" th:id="'aspek'+${aspek.noUrut}" tipe="aspek">
+                                    <th style="text-align: center" data-toggle="collapse" th:href="'.collapse' + ${iterationStatus.index}">
+                                        <a style="color: white;" href="javascript:void(0)"><i class="fas fa-caret-down"></i></a>
+                                    </th>
+                                    <th scope="col" th:text="${aspek.aspek}"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="myTable">
+                                <div th:each="daftarPerspektif, perspektifIterationStatus : ${listDelegasi}" style="border: 1px solid #ddd;">
+                                    <div th:if="${iterationStatus.index == perspektifIterationStatus.index}" th:each="perspektif, perspektifindex : ${daftarPerspektif}">
+                                        <tr th:classappend="${(' collapse'+iterationStatus.index)}" class="collapse show" th:id="'perspektif'+${perspektif.noUrut}" th:attr="parent='aspek'+${aspek.noUrut}" tipe="perspektif">
+                                            <td th:text="${perspektif.noUrut}" align="center"></td>
+                                            <td th:text="${perspektif.perspektif}"></td>
+                                        </tr>
+                                    </div>
+                                </div>
+                                </tbody>
+                            </div>
+                        </table>
+                        <br><br>
+                    </div>
+                </div>
+            <!-- END: ISI KONTEN -->
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+<object th:include="fragments/fragment :: js" th:remove="tag"></object>
+</body>
+<script>
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+        $("#myTable tr").filter(function() {
+            var isMatch = $(this).text().toLowerCase().indexOf(value) > -1;
+            parent = $(this).attr("parent");
+
+            if($('#' + parent).is(":visible")){
+                var isParentMatch = $('#'+ parent).text().toLowerCase().indexOf(value) > -1;
+
+                if(isParentMatch) {
+                    $(this).show();
+                    return;
+                }
+
+                if($(this).attr("tipe")=="perspektif"){
+                    aspekParent = $('#' + parent).attr("parent");
+                    isAspekMatch = $('#' + aspekParent).text().toLowerCase().indexOf(value) > -1
+                    if(isAspekMatch){
+                        $(this).show();
+                        return;
+                    }
+                }
+
+            }
+
+            if(isMatch == true){
+                $(this).show();
+                if($(this).attr("tipe")=="aspek"){
+
+                } else if($(this).attr("tipe")=="perspektif"){
+                    $('#'+parent).show();
+                }
+            }
+            else {
+                $(this).hide()
+            }
+
+        });
+    });
+</script>
+</html>
